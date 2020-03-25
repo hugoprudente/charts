@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "foundry-vtt.fullname" . }}
+  labels:
+    {{- include "foundry-vtt.labels" . | nindent 4 }}
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "foundry-vtt.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:  
+      labels:
+        {{- include "foundry-vtt.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: http
+            containerPort: {{ .Values.foundryvtt.port }}
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/foundryvtt/
+        - name: secret
+          mountPath: "/etc/secret/"
+          readOnly: true
+        - name: data
+          mountPath: /data
+      {{- if .Values.foundryvtt.s3.enabled }}
+        - name: secret-aws
+          mountPath: "/etc/secretaws/"
+          readOnly: true
+      {{- end }}
+      {{- if .Values.letsEncrypt.enabled }}
+        - name: tls
+          mountPath: "/etc/ssl/foundryvtt"
+          readOnly: true
+      {{- end }}       
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ include "foundry-vtt.fullname" . }}
+      - name: secret
+        secret:
+          secretName: {{ include "foundry-vtt.fullname" . }}
+      {{- if .Values.foundryvtt.s3.enabled }}
+      - name: secret-aws
+        secret:
+          secretName: {{ include "foundry-vtt.fullname" . }}-aws
+      {{- end }}
+      {{- if .Values.letsEncrypt.enabled }}
+      - name: tls
+        secret:
+          secretName: {{ include "foundry-vtt.fullname" . }}-tls
+      {{- end }}
+      - name: data
+      {{- if .Values.persistence.dataDir.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "foundry-vtt.fullname" . }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}

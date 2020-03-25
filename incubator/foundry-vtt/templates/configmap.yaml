@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "foundry-vtt.fullname" . }}
+  labels:
+    {{- include "foundry-vtt.labels" . | nindent 4 }}
+data:
+  settings.cfg: |
+    {{ (default "false" .Values.foundryvtt.settings) }}
+  options.json: |- 
+    {
+    "port": {{ (default "30000" .Values.foundryvtt.port) }},
+    "upnp": {{ (default "true" .Values.foundryvtt.upnp) }},
+    
+    "fullscreen": {{ (default "false" .Values.foundryvtt.fullscreen) }},
+    
+    "dataPath": {{ (default "/data/" .Values.foundryvtt.dataPath) | printf "\"%s\"" }},
+    
+    "hostname": {{ (default "null" .Values.foundryvtt.hostname) | printf "\"%s\"" }},    
+    
+    "adminKey": "",
+    
+    {{- if .Values.foundryvtt.s3.enabled }}
+      "awsConfig": "/etc/secretaws/aws-credentials.json",
+    {{- else }}
+      "awsConfig": null,
+    {{- end }}
+
+    {{- if .Values.letsEncrypt.enabled }}
+      "sslCert": "/etc/ssl/foundryvtt/tls.crt",
+      "sslKey": "/etc/ssl/foundryvtt/tls.key",      
+    {{- else if .Values.foundryvtt.sslCert }}
+      "sslCert": {{ (default "null" .Values.foundryvtt.sslCert) | printf "\"%s\"" }},
+      "sslKey": {{ (default "null" .Values.foundryvtt.sslKey) | printf "\"%s\"" }},
+    {{- else }}
+      "sslCert": null,
+      "sslKey": null,
+    {{- end }}
+
+    "proxyPort": {{ (default "null" .Values.foundryvtt.proxyPort) }},    
+    "proxySSL": {{ (default "null" .Values.foundryvtt.proxySSL) }},
+
+    "routePrefix": {{ (default "null" .Values.foundryvtt.routePrefix) }},
+
+    "world": {{ (default "world" .Values.foundryvtt.world) | printf "\"%s\"" }}
+    }
