@@ -35,7 +35,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Configuration
 
-Refer to [values.yaml](values.yaml) for the full run-down on defaults. These are a mixture of Kubernetes and Foundry VTT-related directives that map to environment variables in the [itzg/minecraft-server](https://hub.docker.com/r/itzg/minecraft-server/) Docker image.
+Refer to [values.yaml](values.yaml) for the full run-down on defaults. These are a mixture of Kubernetes and Foundry VTT-related directives that map to environment variables in the [Foundry VTT](https://github.com/hugoprudente/foundryvtt-docker) Docker image.
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
