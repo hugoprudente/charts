@@ -72,9 +72,9 @@ Date:   Thu Feb 2 11:41:15 2018 -0800
 Notice the `Author` and `Signed-off-by` lines match. If they don't
 your PR will be rejected by the automated DCO check.
 
-### Reporting a Bug in Helm
+### Reporting a Bug in Here
 
-This repository is used by Chart developers for maintaining the official charts for Kubernetes Helm. If your issue is in the Helm tool itself, please use the issue tracker in the [helm/helm](https://github.com/helm/helm) repository.
+This repository is used by Chart developers for maintaining the charts for Kubernetes Helm. If your issue is in the Helm tool itself, please use the issue tracker in the [helm/helm](https://github.com/helm/helm) repository.
 
 ## How to Contribute to an Existing Chart
 
@@ -128,9 +128,6 @@ Once the Chart has been merged, the release job will automatically run in the CI
 
 Whether you are a user or contributor, official support channels include:
 
-- GitHub issues: https://github.com/helm/charts/issues
-- Slack: Charts - #Charts room in the [Kubernetes Slack](http://slack.kubernetes.io/)
-- Slack: Helm Users - #Helm-users room in the [Kubernetes Slack](http://slack.kubernetes.io/)
-- Slack: Helm Developers - #Helm-dev room in the [Kubernetes Slack](http://slack.kubernetes.io/)
+- GitHub issues: https://github.com/hugoprudente/charts/issues
 
 Before opening a new issue or submitting a new pull request, it's helpful to search the project - it's likely that another user has already reported the issue you're facing, or it's a known issue that we're already aware of.
