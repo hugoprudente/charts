@@ -38,5 +38,10 @@ spec:
       targetPort: http
       protocol:  {{ .Values.service.protocol }}
       name: http
+    {{- if .Values.service.ssl }}
+    - port: 443
+      targetPort: http
+      name: https
+    {{- end }}
   selector:
     {{- include "foundry-vtt.selectorLabels" . | nindent 4 }}

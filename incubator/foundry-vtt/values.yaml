@@ -6,7 +6,7 @@
 image:
   repository: <add your private registre url here>
   pullPolicy: Always
-  tag: 0.5.1
+  tag: 0.6.0
 
 imagePullSecrets: []
 nameOverride: ""
@@ -16,7 +16,10 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations: 
+    # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
+    # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
+    # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
@@ -47,15 +50,21 @@ service:
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
   externalTrafficPolicy: Local
   labels: {}
+  ssl: false #Enable SSL listener on the load balancer
   annotations: {}
-    # Support to External DNS project
-    # external-dns.alpha.kubernetes.io/hostname: your-domain-here
-
-    # Tags for AWS Load Balancer and others
+    # # Use NLB as default load balancer
     # service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    # service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    # # Use external-dns service for auto registry a domain
+    # external-dns.alpha.kubernetes.io/hostname: foundry.mydomain.com
+    # # ACM and SSL Port if you enable SSL above
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:REGION:ACCOUNTID:certificate/ACM_ID
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+
 
 ingress:
-  enabled: true
+  enabled: false
   extraAnnotations:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
@@ -64,9 +73,9 @@ ingress:
   # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
   # configurationSnippet: |
   #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
-  tls: {}
-     # externa or letsEncrypt
-     # source: letsEncrypt
+  tls:
+     # {}, externa or letsEncrypt
+     source: letsEncrypt
 
 # TLS
 #   Where to offload the TLS/SSL encryption
@@ -77,19 +86,19 @@ tls: ingress
 ### LetsEncrypt config ###
 # ProTip: The production environment only allows you to register a name 5 times a week.
 #         Use staging until you have your config right.
-letsEncrypt:
-  enabled: true
-  email: <your-email-here>
-  environment: staging
+letsEncrypt: {}
+  # enabled: false
+  # email: your@email.com
+  # environment: staging
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:cu
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 1024m
+    memory: 1024Mi
   requests:
     cpu: 512m
     memory: 512Mi
@@ -142,18 +151,27 @@ foundryvtt:
   proxyPort: 80
   
   ### SSL Certificates can be managed on 2 ways:
-  hostname: <add your domain here>
+  hostname: "foundry.domain.com"
+  
+  proxySSL: true
   ## 1) Manually, fill the below or letsEncrypt.enabled true above.
-  #proxySSL: null
   #sslCert: null
   #sslKey: null  
 
   ##awsConfig, is configured automatically.
+  ## This can provide 2 configurations
+  ## 1 - file : Traditional awsConfig file json provided by foundry-vtt stored on secrets
+  ## 2 - true : Use AWS SDK evaluation process https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html
   s3:
-    enabled: false
-    aws_region: eu-west-1
-    aws_access_key_id: "*********************"
-    aws_secret_access_key: "*********************"
+    awsConfig: "false"
+    # if awsConfig: file, configure variables below also
+    # aws_region: eu-west-1
+    # aws_access_key_id: AKIAJI3QCHFBOV2NTPNQ
+    # aws_secret_access_key: 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
+
+  # Select the update channel for Foundry Version
+  # values allowed: beta, alpha, release
+  updateChannel: release
 
 # Certmanager version compatibility
 certmanager: 
