@@ -166,8 +166,8 @@ foundryvtt:
     awsConfig: "false"
     # if awsConfig: file, configure variables below also
     # aws_region: eu-west-1
-    # aws_access_key_id: AKIAJI3QCHFBOV2NTPNQ
-    # aws_secret_access_key: 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
+    # aws_access_key_id: **********************
+    # aws_secret_access_key: ************************
 
   # Select the update channel for Foundry Version
   # values allowed: beta, alpha, release
