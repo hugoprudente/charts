@@ -53,7 +53,7 @@ spec:
           readOnly: true
         - name: data
           mountPath: /data
-      {{- if .Values.foundryvtt.s3.enabled }}
+      {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
         - name: secret-aws
           mountPath: "/etc/secretaws/"
           readOnly: true
@@ -82,11 +82,11 @@ spec:
       - name: secret
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}
-      {{- if .Values.foundryvtt.s3.enabled }}
+    {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
       - name: secret-aws
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}-aws
-      {{- end }}
+    {{- end }}
       {{- if .Values.letsEncrypt.enabled }}
       - name: tls
         secret:
