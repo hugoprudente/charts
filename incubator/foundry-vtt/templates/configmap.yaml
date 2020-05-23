@@ -16,11 +16,11 @@ data:
     
     "dataPath": {{ (default "/data/" .Values.foundryvtt.dataPath) | printf "\"%s\"" }},
     
-    "hostname": {{ (default "null" .Values.foundryvtt.hostname) | printf "\"%s\"" }},    
+    "hostname": {{ (default "null" .Values.foundryvtt.hostname) | printf "\"%s\"" }},
     
-    "adminKey": "",
-    
-    {{- if .Values.foundryvtt.s3.enabled }}
+    {{- if eq .Values.foundryvtt.s3.awsConfig "true" -}}
+      "awsConfig": true,
+    {{- else if eq .Values.foundryvtt.s3.awsConfig "file" -}}
       "awsConfig": "/etc/secretaws/aws-credentials.json",
     {{- else }}
       "awsConfig": null,
@@ -42,5 +42,9 @@ data:
 
     "routePrefix": {{ (default "null" .Values.foundryvtt.routePrefix) }},
 
-    "world": {{ (default "world" .Values.foundryvtt.world) | printf "\"%s\"" }}
+    "world": {{ (default "world" .Values.foundryvtt.world) | printf "\"%s\"" }},
+
+    "updateChannel": {{ (default "release" .Values.foundryvtt.updateChannel) | printf "\"%s\"" }}
+
+
     }
