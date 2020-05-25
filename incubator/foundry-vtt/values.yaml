@@ -2,13 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# ref: 
+# IMAGE 
+# Always use a private repo to host your image.
+# Please build your image using felddy/foundryvtt-docker.
 image:
-  repository: <add your private registre url here>
   pullPolicy: Always
+  repository: <add-your-private-image-repo-here>
   tag: 0.6.0
 
+# Credentials for Docker private repository.
 imagePullSecrets: []
+
+# Override the default chart name
 nameOverride: ""
 fullnameOverride: ""
 
@@ -24,73 +29,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-service:
-  port: 80
-  serviceType: LoadBalancer
-  loadBalancerIP:
-  protocol: TCP
-  # loadBalancerSourceRanges: []
-  ## Set the externalTrafficPolicy in the Service to either Cluster or Local
-  externalTrafficPolicy: Local
-  labels: {}
-  ssl: false #Enable SSL listener on the load balancer
-  annotations: {}
-    # # Use NLB as default load balancer
-    # service.beta.kubernetes.io/aws-load-balancer-type: nlb
-    # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-    # service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
-    # # Use external-dns service for auto registry a domain
-    # external-dns.alpha.kubernetes.io/hostname: foundry.mydomain.com
-    # # ACM and SSL Port if you enable SSL above
-    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:REGION:ACCOUNTID:certificate/ACM_ID
-    # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
-
-
-ingress:
-  enabled: false
-  extraAnnotations:
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
-
-  # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
-  # configurationSnippet: |
-  #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
-  tls:
-     # {}, externa or letsEncrypt
-     source: letsEncrypt
-
-# TLS
-#   Where to offload the TLS/SSL encryption
-# - ingress (default)
-# - external
-tls: ingress
-
-### LetsEncrypt config ###
-# ProTip: The production environment only allows you to register a name 5 times a week.
-#         Use staging until you have your config right.
-letsEncrypt: {}
-  # enabled: false
-  # email: your@email.com
-  # environment: staging
-
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -102,6 +40,28 @@ resources:
   requests:
     cpu: 512m
     memory: 512Mi
+
+service:
+  serviceType: LoadBalancer
+  port: 80
+  protocol: TCP
+  loadBalancerIP:
+  # loadBalancerSourceRanges: []
+  ## Set the externalTrafficPolicy in the Service to either Cluster or Local
+  externalTrafficPolicy: Local
+  labels: {}
+  tls: true #Enable TLS for LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    # Required if service.tls is true.
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:eu-west-1:ACCOUNTID:certificate/CERTID
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    # use external-dns to setup the domain
+    external-dns.alpha.kubernetes.io/hostname: foundry.domain.com
+    # Extra configs
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: auto-delete=never
 
 persistence:
   ## Foundry VTT data Persistent Volume Storage Class
@@ -119,59 +79,85 @@ persistence:
 
 # Foundry VTT Custom configurations
 foundryvtt:
-  ## Disable Foundry Settings Page
-  ## If *true* all configuration changes must be made using K8S ConfiMap here
-  ## If *false* config below will be only used at launch them replaced with Foundry Config Settings.
-  settings: true #Disable the usage of the settings page, all changes there will be reverted to the C
-
   ###########################################
   ### All configurations details are provided here: https://foundryvtt.com/article/hosting/
+  ### All supported environment variables can be found here: https://github.com/felddy/foundryvtt-docker/blob/develop/src/entrypoint.sh
 
-  ## A port number which defines the default port used by the application.
-  ## Require a new container build
-  port: 30000
-
-  ## Allow Universal Plug and Play to automatically request port forwarding for the Foundry VTT port to your local network address. Default is true.
-  upnp: true
-
-  ## A boolean flag for whether to run the Electron application in fullscreen mode.
-  fullscreen: false 
-
-  ## You may specify an explicit path to the user data directory which should be used as the source for packages and other content.
-  dataPath: /data/
-
-  ## You may specify the name of a specific World directory which should be automatically loaded when the server is started. 
-  ## This option will not work if some application setup steps are required, for example EULA acceptance or admin configuration.
-  world: "" 
-
-  ## adminKey 
-  adminKey: "97db444862e87785ffe86fc4a3294255b8ac1287722ddd590189f08b89c623c244425465ab14008ae275e813ccbb8efb5c0023ab80eee175ae2d599f2c7c07d9" #admin
-
-  ## Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port.
-  proxyPort: 80
+  ## Admin password. Default: admin
+  adminKey: admin
   
-  ### SSL Certificates can be managed on 2 ways:
+  ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"
   
+  ## Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port.
+  #proxyPort: "80"
+
+  ## Indicates whether the software is running behind a reverse proxy that uses SSL. This allows invitation links and A/V functionality to work as if the Foundry Server had SSL configured directly.
   proxySSL: true
-  ## 1) Manually, fill the below or letsEncrypt.enabled true above.
+
+  # A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
+  #routePrefix: "/demo"
+  
+  ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
   #sslCert: null
   #sslKey: null  
 
-  ##awsConfig, is configured automatically.
-  ## This can provide 2 configurations
-  ## 1 - file : Traditional awsConfig file json provided by foundry-vtt stored on secrets
-  ## 2 - true : Use AWS SDK evaluation process https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html
-  s3:
-    awsConfig: "false"
-    # if awsConfig: file, configure variables below also
-    # aws_region: eu-west-1
-    # aws_access_key_id: **********************
-    # aws_secret_access_key: ************************
-
-  # Select the update channel for Foundry Version
-  # values allowed: beta, alpha, release
+  ## The update channel to subscribe to. "alpha", "beta", or "release".
   updateChannel: release
+
+  ## Allow Universal Plug and Play to automatically request port forwarding for the Foundry VTT port to your local network address. Default is true.
+  upnp: false
+
+  ## The world startup at system start.
+  world: "" 
+
+  ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
+  s3:
+    awsConfig: "true"
+    # To use the inline credentials and generate "awsConfig.json" use: awsConfig: file
+    # aws_region: eu-west-1
+    # aws_access_key_id: *************
+    # aws_secret_access_key: *************
+
+####################################################################
+#### Extra security and placement strategies that can be configured.
+podSecurityContext: {}
+  # fsGroup: 2000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+####################################################################
+#### TO REVIEW USAGE
+
+ingress:
+  enabled: false
+  extraAnnotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+
+  # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
+  # configurationSnippet: |
+  #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
+  tls:
+     # {}, externa or letsEncrypt
+     source: letsEncrypt
+
+### LetsEncrypt config ###
+# ProTip: The production environment only allows you to register a name 5 times a week.
+#         Use staging until you have your config right.
+letsEncrypt:
+  enabled: false
+  email: email@email.com
+  environment: staging
 
 # Certmanager version compatibility
 certmanager: 

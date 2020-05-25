@@ -15,8 +15,6 @@ spec:
     metadata:  
       labels:
         {{- include "foundry-vtt.selectorLabels" . | nindent 8 }}
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -25,6 +23,13 @@ spec:
       serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: volume-mount-permission
+          image: busybox
+          command: ["sh", "-c", "chown -R 421:421 /data "] 
+          volumeMounts:
+          - name: data
+            mountPath: /data
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
@@ -33,7 +38,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
           - name: http
-            containerPort: {{ .Values.foundryvtt.port }}
+            containerPort: 30000
             protocol: TCP
         livenessProbe:
           httpGet:
@@ -45,12 +50,53 @@ spec:
             port: http
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
+        env:
+          - name: FOUNDRY_ADMIN_KEY
+            value: {{ (default "admin" .Values.foundryvtt.adminKey) | quote }}
+          {{- if .Values.foundryvtt.upnp }}
+          - name: FOUNDRY_UPNP
+            value: {{ .Values.foundryvtt.upnp }}
+          {{- end }}
+          {{ if .Values.foundryvtt.hostname }}
+          - name: FOUNDRY_HOSTNAME
+            value: {{ .Values.foundryvtt.hostname }}
+          {{ end }}
+          {{ if .Values.foundryvtt.routePrefix }}
+          - name: FOUNDRY_ROUTE_PREFIX
+            value: {{ .Values.foundryvtt.routePrefix }}
+          {{ end }}
+          {{ if .Values.foundryvtt.sslCert }}
+          - name: FOUNDRY_SSL_CERT
+            value: {{ .Values.foundryvtt.sslCert }}
+          {{ end }}
+          {{ if .Values.foundryvtt.sslKey }}
+          - name: FOUNDRY_SSL_KEY
+            value: {{ .Values.foundryvtt.sslKey }}
+          {{ end }}
+          {{ if .Values.foundryvtt.proxyPort }}
+          - name: FOUNDRY_PROXY_PORT
+            value: {{ .Values.foundryvtt.proxyPort | quote }}
+          {{ end }}
+          {{ if .Values.foundryvtt.proxySSL }}
+          - name: FOUNDRY_PROXY_SSL
+            value: {{ .Values.foundryvtt.proxySSL | quote }}
+          {{ end }}
+          {{- if eq .Values.foundryvtt.s3.awsConfig "true" -}}
+          - name: FOUNDRY_AWS_CONFIG
+            value: "true"
+          {{- else if eq .Values.foundryvtt.s3.awsConfig "file" -}}
+          - name: FOUNDRY_AWS_CONFIG
+            value: "/etc/secretaws/aws-credentials.json"
+          {{- end }}
+          {{ if .Values.foundryvtt.updateChannel }}
+          - name: FOUNDRY_UPDATE_CHANNEL
+            value: {{ .Values.foundryvtt.updateChannel }}
+          {{ end }}
+          {{ if .Values.foundryvtt.world }}
+          - name: FOUNDRY_WORLD
+            value: {{ .Values.foundryvtt.world | quote }}
+          {{ end }}
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/foundryvtt/
-        - name: secret
-          mountPath: "/etc/secret/"
-          readOnly: true
         - name: data
           mountPath: /data
       {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
@@ -76,26 +122,20 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       volumes:
-      - name: config-volume
-        configMap:
-          name: {{ include "foundry-vtt.fullname" . }}
-      - name: secret
-        secret:
-          secretName: {{ include "foundry-vtt.fullname" . }}
     {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
       - name: secret-aws
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}-aws
     {{- end }}
-      {{- if .Values.letsEncrypt.enabled }}
+    {{- if .Values.letsEncrypt.enabled }}
       - name: tls
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}-tls
-      {{- end }}
+    {{- end }}
       - name: data
-      {{- if .Values.persistence.dataDir.enabled }}
+    {{- if .Values.persistence.dataDir.enabled }}
         persistentVolumeClaim:
           claimName: {{ template "foundry-vtt.fullname" . }}
-      {{- else }}
+    {{- else }}
         emptyDir: {}
-      {{- end }}
+    {{- end }}

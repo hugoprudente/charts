@@ -38,7 +38,7 @@ spec:
       targetPort: http
       protocol:  {{ .Values.service.protocol }}
       name: http
-    {{- if .Values.service.ssl }}
+    {{- if .Values.service.tls }}
     - port: 443
       targetPort: http
       name: https
