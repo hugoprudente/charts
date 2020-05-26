@@ -89,6 +89,9 @@ foundryvtt:
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"
   
+  ## Prevent the application from being updated from the web interface.  The application code is immutable when running in a container.  See the [Updating](#updating) section for the steps needed to update this container.
+  noUpdate: true
+
   ## Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port.
   #proxyPort: "80"
 

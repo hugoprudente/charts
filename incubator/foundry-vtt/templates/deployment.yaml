@@ -61,6 +61,10 @@ spec:
           - name: FOUNDRY_HOSTNAME
             value: {{ .Values.foundryvtt.hostname }}
           {{ end }}
+          {{ if .Values.foundryvtt.noUpdate }}
+          - name: FOUNDRY_NO_UPDATE
+            value: {{ .Values.foundryvtt.noUpdate | quote}}
+          {{ end }}
           {{ if .Values.foundryvtt.routePrefix }}
           - name: FOUNDRY_ROUTE_PREFIX
             value: {{ .Values.foundryvtt.routePrefix }}
