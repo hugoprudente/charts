@@ -28,6 +28,9 @@ spec:
           image: busybox
           command: ["sh", "-c", "chown -R 421:421 /data "] 
           volumeMounts:
+          resources:
+            cpu: 128m
+            memory: 128Mi
           - name: data
             mountPath: /data
       containers:
@@ -70,7 +73,7 @@ spec:
             value: {{ .Values.foundryvtt.routePrefix }}
           {{ end }}
           {{ if .Values.foundryvtt.sslCert }}
-          - name: FOUNDRY_SSL_CERT
+          - name: FOUNDRY_SSL_CERT∂
             value: {{ .Values.foundryvtt.sslCert }}
           {{ end }}
           {{ if .Values.foundryvtt.sslKey }}

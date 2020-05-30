@@ -102,10 +102,77 @@ helm install \
   --version v0.12.0
 ```
 
-kubectl get pods --namespace cert-manager
 ```
+kubectl get pods --namespace cert-manager
 NAME                                       READY   STATUS    RESTARTS   AGE
 cert-manager-5c6866597-zw7kh               1/1     Running   0          2m
 cert-manager-cainjector-577f6d9fd7-tr77l   1/1     Running   0          2m
 cert-manager-webhook-787858fcdb-nlzsq      1/1     Running   0          2m
+```
+
+## Backup & Backup Restauration
+
+Identifying the pod
+
+```bash
+kubectl get pods --namespace foundry-vtt
+NAME                                   READY   STATUS    RESTARTS   AGE
+foundry-vtt-5b5864c7bc-v6r7d           1/1     Running   0          5d5h
+```
+
+Generating the backup on the /tmp/ directory.
+
+```bash
+kubectl exec -it foundry-vtt-5b5864c7bc-v6r7d -- /bin/sh -c "cd /data && tar -cvzf /data/backup.tar.gz Data"
+```
+
+Output:
+
+```log
+Data/
+Data/worlds/
+Data/worlds/README.txt
+Data/worlds/waterdeep/
+Data/worlds/waterdeep/world.json
+Data/worlds/waterdeep/scenes/
+Data/worlds/waterdeep/
+Data/worlds/the-masters-vault/
+...
+Data/assets/characters/tiefling_bard.png
+Data/assets/handout/
+Data/assets/handout/ellaria_will.png
+Data/assets/handout/ellarias_memory.jpg
+Data/assets/tiles/
+Data/assets/tiles/alcaeus_home.png
+Data/assets/tiles/helenes_grave.png
+Data/assets/tiles/vixthras_lair.png
+```
+
+Downloading the backup!
+
+```bash
+kubectl cp foundry-vtt-5b5864c7bc-v6r7d:/data/backup.tar.gz backup.tar.gz
+backup.tar.gz
+```
+
+Resauring a Backup!
+```bash
+kubectl cp backup.tar.gz nerdweek-foundry-vtt-ddc84f8b5-dkz4c:/data/backup.tar.gz
+kubectl exec -it  nerdweek-foundry-vtt-ddc84f8b5-dkz4c -- /bin/sh -c "cd /data/ && tar -xvzf backup.tar.gz && rm -v /data/backup.tar.gz"
+```
+
+Output:
+
+```log
+Data/
+Data/worlds/
+Data/worlds/README.txt
+Data/worlds/waterdeep/
+...
+Data/assets/handout/ellarias_memory.jpg
+Data/assets/tiles/
+Data/assets/tiles/alcaeus_home.png
+Data/assets/tiles/helenes_grave.png
+Data/assets/tiles/vixthras_lair.png
+removed '/data/backup.tar.gz'
 ```
