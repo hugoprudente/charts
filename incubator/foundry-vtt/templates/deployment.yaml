@@ -28,11 +28,12 @@ spec:
           image: busybox
           command: ["sh", "-c", "chown -R 421:421 /data "] 
           volumeMounts:
-          resources:
-            cpu: 128m
-            memory: 128Mi
           - name: data
             mountPath: /data
+          resources:
+            limits:
+              cpu: 128m
+              memory: 128Mi
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
