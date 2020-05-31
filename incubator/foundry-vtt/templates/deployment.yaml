@@ -112,11 +112,6 @@ spec:
           mountPath: "/etc/secretaws/"
           readOnly: true
       {{- end }}
-      {{- if .Values.letsEncrypt.enabled }}
-        - name: tls
-          mountPath: "/etc/ssl/foundryvtt"
-          readOnly: true
-      {{- end }}       
     {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -134,11 +129,6 @@ spec:
       - name: secret-aws
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}-aws
-    {{- end }}
-    {{- if .Values.letsEncrypt.enabled }}
-      - name: tls
-        secret:
-          secretName: {{ include "foundry-vtt.fullname" . }}-tls
     {{- end }}
       - name: data
     {{- if .Values.persistence.dataDir.enabled }}
