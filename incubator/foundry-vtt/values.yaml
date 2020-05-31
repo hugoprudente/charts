@@ -122,6 +122,47 @@ foundryvtt:
     # aws_access_key_id: *************
     # aws_secret_access_key: *************
 
+############################################
+# tls
+#   Where to offload the TLS/SSL encryption
+# - ingress (default)
+# - external
+tls: external
+
+### ingress ###
+# Readme for details and instruction on adding tls secrets.
+ingress:
+  hostname: foundry.domain.com
+  enabled: false
+  extraAnnotations:
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+
+  # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
+  # configurationSnippet: |
+  #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
+  tls:
+     # {}, external, secret, or letsEncrypt
+     source: external
+
+### LetsEncrypt config ###
+# ProTip: The production environment only allows you to register a name 5 times a week.
+#         Use staging until you have your config right.
+letsEncrypt:
+  enabled: false
+  email: email@email.com
+  environment: staging
+
+### secret config ###
+selfsigned: {}
+# cert: certificate
+# key: certificate key
+# Certmanager version compatibility
+certmanager: 
+  version: ""
+
+
 ####################################################################
 #### Extra security and placement strategies that can be configured.
 podSecurityContext: {}
@@ -136,32 +177,3 @@ securityContext: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
-
-####################################################################
-#### TO REVIEW USAGE
-
-ingress:
-  enabled: false
-  extraAnnotations:
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
-
-  # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
-  # configurationSnippet: |
-  #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
-  tls:
-     # {}, externa or letsEncrypt
-     source: letsEncrypt
-
-### LetsEncrypt config ###
-# ProTip: The production environment only allows you to register a name 5 times a week.
-#         Use staging until you have your config right.
-letsEncrypt:
-  enabled: false
-  email: email@email.com
-  environment: staging
-
-# Certmanager version compatibility
-certmanager: 
-  version: ""
