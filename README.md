@@ -1,3 +1,9 @@
+[![GitHub Charts](https://github.com/hugoprudente/charts/workflows/Lint%20and%20Test%20Charts/badge.svg)](https://github.com/hugoprudente/charts/actions/)
+[![Patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://patreon.com/nerdweekoficial)
+[![GitHub license](https://img.shields.io/github/license/hugoprudente/charts)](https://github.com/hugoprudente/charts/blob/master/LICENSE)
+[![GitHub forks](https://img.shields.io/github/forks/hugoprudente/charts)](https://github.com/hugoprudente/charts/network)
+[![GitHub stars](https://img.shields.io/github/stars/hugoprudente/charts)](https://github.com/hugoprudente/charts/stargazers)
+
 # Helm Charts
 
 This GitHub project is the source for Helm `stable` and `incubator`.
