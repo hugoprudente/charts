@@ -8,7 +8,7 @@
 image:
   pullPolicy: Always
   repository: <add-your-private-image-repo-here>
-  tag: 0.6.0
+  tag: 0.6.1
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -116,7 +116,7 @@ foundryvtt:
 
   ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
   s3:
-    awsConfig: "true"
+    # awsConfig: "false"
     # To use the inline credentials and generate "awsConfig.json" use: awsConfig: file
     # aws_region: eu-west-1
     # aws_access_key_id: *************
