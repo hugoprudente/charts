@@ -131,7 +131,9 @@ tls: external
 
 ### ingress ###
 # Readme for details and instruction on adding tls secrets.
-ingress:
+ingress: 
+# options: nginx, contour
+  class: nginx
   hostname: foundry.domain.com
   enabled: false
   extraAnnotations:
@@ -145,7 +147,6 @@ ingress:
   tls:
      # {}, external, secret, or letsEncrypt
      source: external
-
 ### LetsEncrypt config ###
 # ProTip: The production environment only allows you to register a name 5 times a week.
 #         Use staging until you have your config right.
@@ -160,7 +161,7 @@ selfsigned: {}
 # key: certificate key
 # Certmanager version compatibility
 certmanager: 
-  version: ""
+  version: "v1.0.3"
 
 
 ####################################################################

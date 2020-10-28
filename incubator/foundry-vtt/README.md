@@ -89,14 +89,26 @@ you can change the values.yaml to disable persistence under the sub-sections und
 
 > *"An emptyDir volume is first created when a Pod is assigned to a Node, and exists as long as that Pod is running on that node. When a Pod is removed from a node for any reason, the data in the emptyDir is deleted forever."*
 
-## TLS ingress-nginx and Cert Manager
+## TLS ingress-controller and Cert Manager
 
-### Setting up `ingress-nginx` as is required.
+You can use either **ingress-nginx** or **contour** as the ingress controller of this helm, to setup.
+
+### Setting up `ingress-nginx` 
+
+If you decide to use *contour*, go to the next step
 
 ```
 kubectl create ns ingress-nginx
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
+```
+
+### Setting up `projectcontour`
+
+If you choose *ingress-nginx*, go to the next step
+
+```
+kubectl create ns projectcontour
+kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
 ```
 
 ### Create the namespace for cert-manager
@@ -121,8 +133,9 @@ helm repo update
 ```
 helm install \
   cert-manager jetstack/cert-manager \
-  --namespace cert-manager\ 
-  --version v0.15.1 
+  --namespace cert-manager \
+  --version v1.0.3 \
+  --set installCRDs=true
 ```
 
 ```

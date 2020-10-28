@@ -1,11 +1,5 @@
-{{- if .Values.letsEncrypt.enabled -}}
-  {{- if .Values.letsEncrypt.enabled -}}
-    {{- $certmanagerVer :=  split "." .Values.certmanager.version -}}
-    {{- if or (.Capabilities.APIVersions.Has "cert-manager.io/v1alpha2") (and (eq (int $certmanagerVer._0) 0) (ge (int $certmanagerVer._1) 11)) }}
-apiVersion: cert-manager.io/v1alpha2
-    {{- else if or (.Capabilities.APIVersions.Has "certmanager.k8s.io/v1alpha1") (and (eq (int $certmanagerVer._0) 0) (lt (int $certmanagerVer._1) 11)) }}
-apiVersion: certmanager.k8s.io/v1alpha1
-    {{- end }}
+{{- if eq .Values.tls "ingress" -}}
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ template "foundry-vtt.fullname" . }}
@@ -24,13 +18,8 @@ spec:
     email: {{ .Values.letsEncrypt.email }}
     privateKeySecretRef:
       name: letsencrypt-{{ .Values.letsEncrypt.environment }}
-    {{- if or (.Capabilities.APIVersions.Has "cert-manager.io/v1alpha2") (and (eq (int $certmanagerVer._0) 0) (ge (int $certmanagerVer._1) 11)) }}
     solvers:
     - http01:
         ingress:
-          class: nginx
-    {{- else if or (.Capabilities.APIVersions.Has "certmanager.k8s.io/v1alpha1") (and (eq (int $certmanagerVer._0) 0) (lt (int $certmanagerVer._1) 11)) }}
-    http01: {}
-    {{- end }}
-  {{- end -}}
+          class: {{ .Values.ingress.class }}
 {{- end -}}

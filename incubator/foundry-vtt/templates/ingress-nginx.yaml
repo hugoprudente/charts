@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled }}
+{{- if and (eq .Values.ingress.enabled true) (eq .Values.ingress.class "nginx") }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
