@@ -8,7 +8,7 @@
 image:
   pullPolicy: Always
   repository: <add-your-private-image-repo-here>
-  tag: 0.6.6
+  tag: 0.7.5
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -19,7 +19,7 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Annotations to add to the service account
   annotations: 
     # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
@@ -65,6 +65,13 @@ service:
 
 persistence:
   ## Foundry VTT data Persistent Volume Storage Class
+  ## Bind mount is mutually exclusive.
+  ## when storageClass for PV is enable this is automatically disabled
+  ## To use bind.enabled == true and dataDir.enabled == false
+  bind:    
+    enabled: false
+    hostpath: /files
+
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is
