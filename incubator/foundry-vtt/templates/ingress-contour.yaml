@@ -52,4 +52,29 @@ spec:
       services:
         - name: {{ template "foundry-vtt.fullname" . }}
           port: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: {{ template "foundry-vtt.fullname" . }}
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+  name: {{ template "foundry-vtt.fullname" . }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.hostname }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "foundry-vtt.fullname" . }}
+          servicePort: 80
+  tls:
+  - hosts:
+    - {{ .Values.ingress.hostname }}
+    {{- if eq .Values.ingress.tls.source "secret" }}
+    secretName: {{ template "foundry-vtt.fullname" . }}-signed
+    {{- else }}
+    secretName: {{ template "foundry-vtt.fullname" . }}-ingress
+    {{- end}}
 {{- end }}
