@@ -2,15 +2,17 @@ apiVersion: v2
 name: foundry-vtt
 description: Foundry Virtual Tabletop
 type: application
-version: 0.2.2
-appVersion: 0.7.5
+version: 0.2.3
+appVersion: 0.7.7
 keywords:
 - game
 - server
 - vtt
 - virtualtabletop
+- foundryvtt
+- foundry
 sources:
-- https://github.com/hugoprudente/foundry-vtt
+- https://github.com/hugoprudente/charts/tree/main/incubator/foundry-vtt
 maintainers:
 - name: hugoprudente
   email: hugo.kenshin@gmail.com
