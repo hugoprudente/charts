@@ -16,6 +16,6 @@
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:30000
 {{- end }}
 
-2. If you like this Helm Chart please consider Start it on GitHub.com
+2. If you like this Helm Chart please consider *Star* it on GitHub.com
 
-3. Enjoy and may  you roll the best that you can!
+3. Enjoy and may you roll the best that you can!

@@ -1,7 +1,7 @@
 # Foundry VTT
 
 <!-- BADGES/ -->
-[![FoundryVTT Version: v0.7.7](https://img.shields.io/badge/foundry-v0.7.7-brightgreen?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAA6gAwAEAAAAAQAAAA4AAAAATspU+QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAiFJREFUKBVVks1rE1EUxc+d5tO0prZVSZsUhSBIPyC02ooWurJ0I7rQlRvdC/4N4h9gt7pyoRTswpWgILgQBIOIiC340VhbpC0Ek85MGmPmXc+baWpNGJg77/7uOffeB+z9FHB0FrH9eLwwqpOF0f34KrpsTicW+6L8KE8QhO/n8n1IOgtQHYZA+a/Ai9+Wd6v1g7liq5A2OjKSQNa9hkO4hAzOIylf6CHALk6hoWXsylPkfjyyApaJhVCxmERy5zLSuI7D8h1H5BWht1aBhS6wdI3pN7GabyuyS4JPrchzujmNjDxAVrrRL2PoxRSGxOfjssgEjkkJvVJBWu6h5M7YenvDoOO0OgicD4TPIKWbBG6xvwTaKCMwSU7hKxK6gt8mbsFIMaF5iDyjUg6iPnqc58higCr9fD4iTvWMziAmK2g73f/AADVWX0YXrlChirgOcqL3WXYBYpTfUuxzjkW30dI1C0ZW1RnjMopo4C56MIs6CgQrMER2cJoz9zjdO2iz17g2yZUjqzHWbuA4/ugiEz7DVRe/aLxmcvDQ5Cq+oWGWeDbAgiETXgArrVOFGzR0EkclxrVMcpfLgFThY5roe2yz95ZZkzcbj22+w2VG8Pz6Q/b5Gr6uM9mw04uo6ll4tOlhE8a8xNzGYihCJoT+u3I4kUIp6OM0X9CHHds8frbqsrXlh9CB62nj8L5a9Y4DHR/K68TgcHhoz607Qp34L72X0rdSdM+vAAAAAElFTkSuQmCC)](https://foundryvtt.com/releases/0.7.7)
+[![FoundryVTT Version: v0.7.9](https://img.shields.io/badge/foundry-v0.7.9-brightgreen?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAA6gAwAEAAAAAQAAAA4AAAAATspU+QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAAiFJREFUKBVVks1rE1EUxc+d5tO0prZVSZsUhSBIPyC02ooWurJ0I7rQlRvdC/4N4h9gt7pyoRTswpWgILgQBIOIiC340VhbpC0Ek85MGmPmXc+baWpNGJg77/7uOffeB+z9FHB0FrH9eLwwqpOF0f34KrpsTicW+6L8KE8QhO/n8n1IOgtQHYZA+a/Ai9+Wd6v1g7liq5A2OjKSQNa9hkO4hAzOIylf6CHALk6hoWXsylPkfjyyApaJhVCxmERy5zLSuI7D8h1H5BWht1aBhS6wdI3pN7GabyuyS4JPrchzujmNjDxAVrrRL2PoxRSGxOfjssgEjkkJvVJBWu6h5M7YenvDoOO0OgicD4TPIKWbBG6xvwTaKCMwSU7hKxK6gt8mbsFIMaF5iDyjUg6iPnqc58higCr9fD4iTvWMziAmK2g73f/AADVWX0YXrlChirgOcqL3WXYBYpTfUuxzjkW30dI1C0ZW1RnjMopo4C56MIs6CgQrMER2cJoz9zjdO2iz17g2yZUjqzHWbuA4/ugiEz7DVRe/aLxmcvDQ5Cq+oWGWeDbAgiETXgArrVOFGzR0EkclxrVMcpfLgFThY5roe2yz95ZZkzcbj22+w2VG8Pz6Q/b5Gr6uM9mw04uo6ll4tOlhE8a8xNzGYihCJoT+u3I4kUIp6OM0X9CHHds8frbqsrXlh9CB62nj8L5a9Y4DHR/K68TgcHhoz607Qp34L72X0rdSdM+vAAAAAElFTkSuQmCC)](https://foundryvtt.com/releases/0.7.9)
 [![GitHub Charts](https://github.com/hugoprudente/charts/workflows/Lint%20and%20Test%20Charts/badge.svg)](https://github.com/hugoprudente/charts/actions/)
 [![Patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://patreon.com/nerdweekoficial)
 [![GitHub license](https://img.shields.io/github/license/hugoprudente/charts)](https://github.com/hugoprudente/charts/blob/master/LICENSE)
@@ -25,7 +25,25 @@ minutes using this chart and Felddy [foundryvtt-docker](https://github.com/feldd
 To install the chart with the release name `my-release`, run:
 
 ```bash
-$ helm install --name my-release ./incubator/foundry-vtt
+$ helm install my-release ./incubator/foundry-vtt
+```
+
+or 
+
+```bash
+$ helm install my-release \
+    --set foundryvtt.adminKey='MyPa$$word' \
+    --set foundryvtt.username='my-foundry-website-user' \
+    --set foundryvtt.password='my-foundry-website-user-pass' \
+    ./incubator/foundry-vtt
+```
+
+> **NOTE**: Check the [Values configurations](#required-combinations) for the combinations on how to fetch Foundry VTT application using Felddy's [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker) as an alternative to built your own container.
+
+or
+
+```bash
+$ helm install my-release ./incubator/foundry-vtt -f incubator/foundry-vtt/values.yaml
 ```
 
 This command deploys a Foundry VTT dedicated server with sensible defaults.
@@ -49,7 +67,7 @@ Refer to [values.yaml](values.yaml) for the full run-down on defaults. These are
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install --name my-release \
+$ helm install my-release \
     --set foundryvtt.adminKey='MyPa$$word' \
     ./incubator/foundry-vtt
 ```
@@ -57,31 +75,85 @@ $ helm install --name my-release \
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml ./incubator/foundry-vtt
+$ helm install my-release -f values.yaml ./incubator/foundry-vtt
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
 
-### Values Configurations  ###
+## Values Configurations  ##
+
+### Required combinations ###
+
+One of the three combinations of environment variables listed below must be set
+in order for the container to locate and install a Foundry Virtual Tabletop
+distribution.  Although all variables may be specified together, they are
+evaluated in the following order of precedence:
+
+ 1. `foundryvtt.release_url`, *or*
+ 1. `foundryvtt.username` and `foundryvtt.password`, *or*
+ 1. `container.cache`
+
+#### Credentials variables ####
+
+| Name             | Purpose  |
+|------------------|----------|
+| foundryvtt.password | Account password for foundryvtt.com.  Required for downloading an application distribution. |
+| foundryvtt.username | Account username or email address for foundryvtt.com.  Required for downloading an application distribution. |
+
+#### Pre-signed URL variable ####
+
+| Name             | Purpose  |
+|------------------|----------|
+| foundryvtt.release_url | S3 pre-signed URL generate from the user's profile.  Required for downloading an application distribution. |
+
+#### Pre-cached distribution variable ####
+
+A distribution can be downloaded and placed into a cache directory.  The
+distribution's name must be of the form: `foundryvtt-0.7.9.zip`
+
+| Name             | Purpose  |
+|------------------|----------|
+| container.cache | 	Set a path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_cache |
+
+### Optional for Container ###
+
+| Parameter  | Description | Default |
+|-------|---------|---------|
+| container.gid    | `gid` the deamon will be run under. | `foundry` |
+| container.patches | Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started.  The path should be in `/data` or another persistent mount point in the container. e.g.; `/data/patches`  Patch files are sourced in lexicographic order.  `container.patches` are processed after `container.patch_urls`.|  |
+| container.patchUrls | Set to a list of URLs to be sourced after Foundry is installed but before it is started.  Patch URLs are sourced in the order specified.  `container.patch_urls` are processed before `container.patches`.  ⚠️ **Only use patch URLs from trusted sources!** | |
+| container.preserveConfig | Normally new `options.json` and `admin.txt` files are generated by the container at each startup.  Setting this to `true` prevents the container from modifying these files when they exist.  If they do not exist, they will be created as normal. | `false` |
+| container.preserveOwner | Normally the ownership of the `/data` directory and its contents are changed to match that of the server at startup.  Setting this to a regular expression will exclude any matching paths and preserve their ownership.   _Note: This is a match on the whole path, not a search._  This is useful if you want mount a volume as read-only inside `/data` (e.g.; a volume that contains assets mounted at `/data/Data/assets`).  | |
+| container.timezone | Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) | `UTC` |
+| container.uid  | `uid` the daemon will be run under. | `foundry` |
+| container.verbose | Set to `true` to enable verbose logging for the container utility scripts. | false |
+
+---
+
+### Optional for Foundry VTT ###
 
 | Parameter  | Description | Default |
 |-------|---------|---------|
 | foundryvtt.adminKey | Admin password to be applied at startup.  If omitted the admin password will be cleared. | admin |
-| foundryvtt.awsConfig | An absolute or relative path that points to the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage | null |
 | foundryvtt.hostname | A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address. | foundry.domain.com |
-| foundryvtt.noUpdate | Prevent the application from being updated from the web interface.  The application code is immutable when running in a container.  See the [Updating](#updating) section for the steps needed to update this container. | true |
+| foundryvtt.language      | The default application language and module which provides the core translation files. | `en.core` |
+| foundryvtt.license_key |	The license key to install. e.g.; AAAA-BBBB-CCCC-DDDD-EEEE-FFFF If left unset, a license key will be fetched when using account authentication. If multiple license keys are associated with an account, one will be chosen at random. Specific licenses can be selected by passing in an integer index. The first license key being 1.|
+| foundryvtt.minifyStaticFiles | Set to `true` to reduce network traffic by serving minified static JavaScript and CSS files.  Enabling this setting is recommended for most users, but module developers may wish to disable it | true |
 | foundryvtt.proxyPort | Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port. | 80 |
 | foundryvtt.proxySSL | Indicates whether the software is running behind a reverse proxy that uses SSL. This allows invitation links and A/V functionality to work as if the Foundry Server had SSL configured directly. | true |
 | foundryvtt.routePrefix | A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to `demo` will result in data being served from `http://x.x.x.x:30000/demo/`. | null |
+| foundryvtt.s3.awsConfig | configure the data in the values.yaml to generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage | false |
 | foundryvtt.sslCert | An absolute or relative path that points towards a SSL certificate file which is used jointly with the sslKey option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically. | null |
 | foundryvtt.sslKey | An absolute or relative path that points towards a SSL key file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically. | null |
-| foundryvtt.updateChannel | The update channel to subscribe to.  "alpha", "beta", or "release". | "release" |
+| foundryvtt.turnConfigs | An array of TURN configurations in JSON format.  See: [Using a Custom Relay Server](https://foundryvtt.com/article/audio-video/#custom).  To disable the internal relay server comment the paramenter. |  |
+| foundryvtt.turnMaxPort | Sets the maximum UDP port used by the internal [TURN relay server](https://foundryvtt.com/article/audio-video/).  This value must be greater than `49152`.  _Note: To use the internal relay server its ports must be published._ | |
 | foundryvtt.upnp | Allow Universal Plug and Play to automatically request port forwarding for the Foundry VTT port to your local network address. | false |
+| foundryvtt.version | Version of Foundry Virtual Tabletop to install. | 0.7.9 |
 | foundryvtt.world | The world startup at system start. | null |
 
 ## Persistence
 
-The [Foundry VTT Docker](https://github.com/hugoprudente/foundryvtt-docker) image needs to be built and published to private registry, stores the saved games and mods under /data.
+The [Foundry VTT Docker](https://github.com/felddy/foundryvtt-docker) image can be built and published to a private registry. You can use that to store a default state like worlds, modules, assets and extras in the /data.
 
 By default a PersistentVolumeClaim is created and mounted for saves but not mods. In order to disable this functionality
 
