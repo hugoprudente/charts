@@ -1,0 +1,14 @@
+__pycache__
+.mypy_cache
+.pytest_cache
+.python-version
+*-mine.*
+*.egg-info
+*.tgz
+*.zip
+.secret
+.secrets
+values.local*
+license.json
+node_modules
+package-lock.json

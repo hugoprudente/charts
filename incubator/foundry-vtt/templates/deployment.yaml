@@ -45,16 +45,62 @@ spec:
             containerPort: 30000
             protocol: TCP
         livenessProbe:
+          {{- if or (.Values.foundryvtt.username) (.Values.foundryvtt.release_url) }}
+          initialDelaySeconds: 300
+          failureThreshold: 30
+          periodSeconds: 20
+          {{- end }}
           httpGet:
             path: /
             port: http
         readinessProbe:
+          initialDelaySeconds: 30
           httpGet:
             path: /
             port: http
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         env:
+          {{- if .Values.container.cache }}
+          - name: CONTAINER_CACHE
+            value: {{ .Values.container.cache }}
+          {{- end }}
+          {{- if .Values.container.gid }}
+          - name: FOUNDRY_GID
+            value: {{ .Values.container.gid | quote }}
+          {{- end }}
+          {{- if .Values.container.patches }}
+          - name: CONTAINER_PATCHES
+            value: {{ .Values.container.patches }}
+          {{- end }}
+          {{- if .Values.container.patchUrls }}
+          - name: CONTAINER_PATCH_URLS
+            value: {{ join " " .Values.container.patchUrls }}
+          {{- end }}
+          {{- if .Values.container.preserveConfig }}
+          - name: CONTAINER_PRESERVE_CONFIG
+            value: {{ .Values.container.preserveConfig | quote }}
+          {{- end }}
+          {{- if .Values.container.preserveOwner }}
+          - name: CONTAINER_PRESERVE_OWNER
+            value: {{ .Values.container.preserveOwner }}
+          {{- end }}
+          {{- if .Values.container.timezone }}
+          - name: TIMEZONE
+            value: {{ .Values.container.timezone }}
+          {{- end }}
+          {{- if .Values.container.uid }}
+          - name: FOUNDRY_UID
+            value: {{ .Values.container.uid | quote }}
+          {{- end }}
+          {{- if .Values.container.verbose }}
+          - name: CONTAINER_VERBOSE
+            value: {{ .Values.container.verbose | quote }}
+          {{- end }}
+          {{- if .Values.foundryvtt.release_url }}
+          - name: FOUNDRY_RELEASE_URL
+            value: {{ .Values.foundryvtt.release_url }}
+          {{- end }}
           - name: FOUNDRY_ADMIN_KEY
             valueFrom:
               secretKeyRef:
@@ -82,10 +128,6 @@ spec:
           - name: FOUNDRY_HOSTNAME
             value: {{ .Values.foundryvtt.hostname }}
           {{- end }}
-          {{- if .Values.foundryvtt.noUpdate }}
-          - name: FOUNDRY_NO_UPDATE
-            value: {{ .Values.foundryvtt.noUpdate | quote}}
-          {{- end }}
           {{- if .Values.foundryvtt.routePrefix }}
           - name: FOUNDRY_ROUTE_PREFIX
             value: {{ .Values.foundryvtt.routePrefix }}
@@ -102,6 +144,21 @@ spec:
           - name: FOUNDRY_PROXY_PORT
             value: {{ .Values.foundryvtt.proxyPort | quote }}
           {{- end }}
+          {{- if .Values.foundryvtt.minifyStaticFiles }}
+          - name: FOUNDRY_MINIFY_STATIC_FILES
+            value: {{ .Values.foundryvtt.minifyStaticFiles | quote }}
+          {{- end }}
+          {{- if .Values.foundryvtt.language }}
+          - name: FOUNDRY_LANGUAGE
+            value: {{ .Values.foundryvtt.language }}
+          {{- end }}
+          {{- if .Values.foundryvtt.license_key }}
+          - name: FOUNDRY_LICENSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "foundry-vtt.fullname" . }}
+                key: license_key
+          {{- end }}
           {{- if .Values.foundryvtt.proxySSL }}
           - name: FOUNDRY_PROXY_SSL
             value: {{ .Values.foundryvtt.proxySSL | quote }}
@@ -113,9 +170,20 @@ spec:
           - name: FOUNDRY_AWS_CONFIG
             value: "/etc/secretaws/aws-credentials.json"
           {{- end }}
-          {{- if .Values.foundryvtt.updateChannel }}
-          - name: FOUNDRY_UPDATE_CHANNEL
-            value: {{ .Values.foundryvtt.updateChannel }}
+          {{- if .Values.foundryvtt.turnConfigs }}
+          - name: FOUNDRY_TURN_CONFIGS
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "foundry-vtt.fullname" . }}-turn-configs
+                key: turnConfigs.json
+          {{- end }}
+          {{- if .Values.foundryvtt.turnMaxPort }}
+          - name: FOUNDRY_TURN_MAX_PORT
+            value: {{ .Values.foundryvtt.turnMaxPort | quote }}
+          {{- end }}
+          {{- if .Values.foundryvtt.version }}
+          - name: FOUNDRY_VERSION
+            value: {{ .Values.foundryvtt.version | quote }}
           {{- end }}
           {{- if .Values.foundryvtt.world }}
           - name: FOUNDRY_WORLD
