@@ -23,17 +23,6 @@ spec:
       serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: volume-mount-permission
-          image: busybox
-          command: ["sh", "-c", "chown -R root:root /data "]
-          volumeMounts:
-          - name: data
-            mountPath: /data
-          resources:
-            limits:
-              cpu: 128m
-              memory: 128Mi
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
@@ -97,15 +86,7 @@ spec:
           - name: CONTAINER_VERBOSE
             value: {{ .Values.container.verbose | quote }}
           {{- end }}
-          {{- if .Values.foundryvtt.release_url }}
-          - name: FOUNDRY_RELEASE_URL
-            value: {{ .Values.foundryvtt.release_url }}
-          {{- end }}
-          - name: FOUNDRY_ADMIN_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "foundry-vtt.fullname" . }}
-                key: adminKey
+          # Foundry fetch files only
           {{- if .Values.foundryvtt.username }}
           - name: FOUNDRY_USERNAME
             valueFrom:
@@ -120,33 +101,19 @@ spec:
                 name: {{ template "foundry-vtt.fullname" . }}
                 key: password
           {{- end }}
-          {{- if .Values.foundryvtt.upnp }}
-          - name: FOUNDRY_UPNP
-            value: {{ .Values.foundryvtt.upnp }}
+          {{- if .Values.foundryvtt.release_url }}
+          - name: FOUNDRY_RELEASE_URL
+            value: {{ .Values.foundryvtt.release_url }}
           {{- end }}
+          # foundry configuration files
+          - name: FOUNDRY_ADMIN_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "foundry-vtt.fullname" . }}
+                key: adminKey
           {{- if .Values.foundryvtt.hostname }}
           - name: FOUNDRY_HOSTNAME
             value: {{ .Values.foundryvtt.hostname }}
-          {{- end }}
-          {{- if .Values.foundryvtt.routePrefix }}
-          - name: FOUNDRY_ROUTE_PREFIX
-            value: {{ .Values.foundryvtt.routePrefix }}
-          {{- end }}
-          {{- if .Values.foundryvtt.sslCert }}
-          - name: FOUNDRY_SSL_CERT∂
-            value: {{ .Values.foundryvtt.sslCert }}
-          {{- end }}
-          {{- if .Values.foundryvtt.sslKey }}
-          - name: FOUNDRY_SSL_KEY
-            value: {{ .Values.foundryvtt.sslKey }}
-          {{- end }}
-          {{- if .Values.foundryvtt.proxyPort }}
-          - name: FOUNDRY_PROXY_PORT
-            value: {{ .Values.foundryvtt.proxyPort | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.minifyStaticFiles }}
-          - name: FOUNDRY_MINIFY_STATIC_FILES
-            value: {{ .Values.foundryvtt.minifyStaticFiles | quote }}
           {{- end }}
           {{- if .Values.foundryvtt.language }}
           - name: FOUNDRY_LANGUAGE
@@ -159,9 +126,21 @@ spec:
                 name: {{ template "foundry-vtt.fullname" . }}
                 key: license_key
           {{- end }}
+          {{- if .Values.foundryvtt.minifyStaticFiles }}
+          - name: FOUNDRY_MINIFY_STATIC_FILES
+            value: {{ .Values.foundryvtt.minifyStaticFiles | quote }}
+          {{- end }}
+          {{- if .Values.foundryvtt.proxyPort }}
+          - name: FOUNDRY_PROXY_PORT
+            value: {{ .Values.foundryvtt.proxyPort | quote }}
+          {{- end }}
           {{- if .Values.foundryvtt.proxySSL }}
           - name: FOUNDRY_PROXY_SSL
             value: {{ .Values.foundryvtt.proxySSL | quote }}
+          {{- end }}
+          {{- if .Values.foundryvtt.routePrefix }}
+          - name: FOUNDRY_ROUTE_PREFIX
+            value: {{ .Values.foundryvtt.routePrefix }}
           {{- end }}
           {{- if eq .Values.foundryvtt.s3.awsConfig "true" -}}
           - name: FOUNDRY_AWS_CONFIG
@@ -169,6 +148,14 @@ spec:
           {{- else if eq .Values.foundryvtt.s3.awsConfig "file" -}}
           - name: FOUNDRY_AWS_CONFIG
             value: "/etc/secretaws/aws-credentials.json"
+          {{- end }}
+          {{- if .Values.foundryvtt.sslCert }}
+          - name: FOUNDRY_SSL_CERT
+            value: {{ .Values.foundryvtt.sslCert }}
+          {{- end }}
+          {{- if .Values.foundryvtt.sslKey }}
+          - name: FOUNDRY_SSL_KEY
+            value: {{ .Values.foundryvtt.sslKey }}
           {{- end }}
           {{- if .Values.foundryvtt.turnConfigs }}
           - name: FOUNDRY_TURN_CONFIGS
@@ -180,6 +167,10 @@ spec:
           {{- if .Values.foundryvtt.turnMaxPort }}
           - name: FOUNDRY_TURN_MAX_PORT
             value: {{ .Values.foundryvtt.turnMaxPort | quote }}
+          {{- end }}
+          {{- if .Values.foundryvtt.upnp }}
+          - name: FOUNDRY_UPNP
+            value: {{ .Values.foundryvtt.upnp }}
           {{- end }}
           {{- if .Values.foundryvtt.version }}
           - name: FOUNDRY_VERSION
