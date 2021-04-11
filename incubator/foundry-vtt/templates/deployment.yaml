@@ -183,6 +183,13 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data
+      {{- if eq .Values.persistence.shared.enabled true }}
+        {{- range $i, $mount := .Values.persistence.shared.mounts }}
+        - name: {{ printf "%s-%s" "shared" ($i|toString) }}
+          mountPath: {{ printf "%s%s" "/data/Data" $mount.containerPath }}
+          readOnly: {{ $mount.readOnly }}
+        {{- end }}
+      {{- end }}
       {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
         - name: secret-aws
           mountPath: "/etc/secretaws/"
@@ -216,4 +223,17 @@ spec:
           claimName: {{ template "foundry-vtt.fullname" . }}
     {{- else }}
         emptyDir: {}
+    {{- end }}
+    {{- if eq .Values.persistence.shared.enabled true }}
+      {{- range $i, $mount := .Values.persistence.shared.mounts }}
+      - name: {{ printf "%s-%s" "shared" ($i|toString) }}
+        {{ if eq $mount.type "bind" }}
+        hostPath:
+          path: {{ $mount.hostPath }}
+          type: Directory
+        {{ else if eq $mount.type "pvc" }}
+        persistentVolumeClaim:
+          claimName: {{ $mount.claimName }}
+        {{ end }}
+      {{- end }}
     {{- end }}
