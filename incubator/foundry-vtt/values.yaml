@@ -84,6 +84,24 @@ persistence:
     enabled: false
     Size: 5Gi
 
+  shared:
+    # Enable tha shared mount for a NFS file system or a shared bind point with for
+    # sharing assets between multiple game instances when not using s3.
+    enabled: false
+    mounts:
+    ## containerPath: is relative to the /data/Data
+    ## type: bind or pvc
+    ## hostpath: only used for bind mount
+    ## readOnly: enable read only directories
+    ## clainName: to be used mainly with NFS CSI PV/PVC
+    # - containerPath: "/shared"
+    #   type: bind
+    #   hostPath: /files/assets
+    #   readOnly: true
+    # - containerPath: "/files/assets"
+    #   type: pvc
+    #   claimName: "pvc-files"
+
 # felddy/foundryvtt-docker container extra customizations.
 container:
   ## Set a path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. The path should be in /data or another persistent mount point in the container. e.g.; /data/cache
