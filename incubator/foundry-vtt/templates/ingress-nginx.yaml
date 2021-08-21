@@ -1,5 +1,5 @@
 {{- if and (eq .Values.ingress.enabled true) (eq .Values.ingress.class "nginx") }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ template "foundry-vtt.fullname" . }}
@@ -34,9 +34,13 @@ spec:
   - host: {{ .Values.ingress.hostname }}
     http:
       paths:
-      - backend:
-          serviceName: {{ template "foundry-vtt.fullname" . }}
-          servicePort: 80
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ template "foundry-vtt.fullname" . }}
+            port:
+              number: 80
 {{- if eq .Values.tls "ingress" }}
   tls:
   - hosts:

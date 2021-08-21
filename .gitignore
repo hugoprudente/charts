@@ -2,6 +2,7 @@ __pycache__
 .mypy_cache
 .pytest_cache
 .python-version
+.envrc
 *-mine.*
 *.egg-info
 *.tgz

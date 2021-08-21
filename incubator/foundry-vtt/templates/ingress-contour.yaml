@@ -9,23 +9,6 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
   annotations:
-# {{- if .Values.ingress.configurationSnippet }}
-#     nginx.ingress.kubernetes.io/configuration-snippet: |
-#       {{- template "configurationSnippet" . }}
-# {{- end }}
-# {{- if eq .Values.tls "external" }}
-#     nginx.ingress.kubernetes.io/ssl-redirect: "false" # turn off ssl redirect for external.
-# {{- else }}
-#   {{- if ne .Values.ingress.tls.source "secret" }}
-#     {{- $certmanagerVer :=  split "." .Values.certmanager.version -}}
-#     {{- if or (.Capabilities.APIVersions.Has "cert-manager.io/v1alpha2") (and (eq (int $certmanagerVer._0) 0) (ge (int $certmanagerVer._1) 11)) }}
-#     cert-manager.io/issuer: {{ template "foundry-vtt.fullname" . }}
-#     cert-manager.io/issuer-kind: Issuer
-#     {{- else if or (.Capabilities.APIVersions.Has "certmanager.k8s.io/v1alpha1") (and (eq (int $certmanagerVer._0) 0) (lt (int $certmanagerVer._1) 11)) }}
-#     certmanager.k8s.io/issuer: {{ template "foundry-vtt.fullname" . }}
-#     {{- end }}
-#   {{- end }}
-# {{- end }}
 {{- if .Values.ingress.extraAnnotations }}
 {{ toYaml .Values.ingress.extraAnnotations | indent 4 }}
 {{- end }}
@@ -53,7 +36,7 @@ spec:
         - name: {{ template "foundry-vtt.fullname" . }}
           port: 80
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -66,9 +49,13 @@ spec:
   - host: {{ .Values.ingress.hostname }}
     http:
       paths:
-      - backend:
-          serviceName: {{ template "foundry-vtt.fullname" . }}
-          servicePort: 80
+       - pathType: Prefix
+         path: "/"
+         backend:
+           service:
+             name: {{ template "foundry-vtt.fullname" . }}
+             port:
+               number: 80
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}
