@@ -2,13 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# IMAGE 
+# IMAGE
 # Always use a private repo to host your image.
 # Please build your image using felddy/foundryvtt-docker.
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-0.7.9
+  tag: release-0.8.6
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -21,7 +21,7 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: false
   # Annotations to add to the service account
-  annotations: 
+  annotations:
     # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
     # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
@@ -68,7 +68,7 @@ persistence:
   ## Bind mount is mutually exclusive.
   ## when storageClass for PV is enable this is automatically disabled
   ## To use bind.enabled == true and dataDir.enabled == false
-  bind:    
+  bind:
     enabled: false
     hostpath: /files
 
@@ -153,10 +153,10 @@ foundryvtt:
 
   ## Admin password. Default: admin
   adminKey: admin
-  
+
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"
-  
+
   ## The default application language and module which provides the core translation files. Default is "en.core"
   language: en.core
 
@@ -171,7 +171,7 @@ foundryvtt:
 
   # A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
   #routePrefix: "/demo"
-  
+
   ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
   s3:
     awsConfig: "false"
@@ -182,12 +182,12 @@ foundryvtt:
 
   ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
   #sslCert: null
-  #sslKey: null  
+  #sslKey: null
 
   ## An array of TURN configurations in JSON format. See: [Using a Custom Relay Server](https://foundryvtt.com/article/audio-video/custom). To disable the internal relay server comment the paramenter. It will be converted when stored in the secrets
   # turnConfigs:
   #   - url: "turn:example.com:3478"
-  #     urls: 
+  #     urls:
   #       - "turn:example.com:3478"
   #       - "turns:example.com:5349"
   #     username: "my username"
@@ -200,10 +200,10 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 0.7.9
+  version: 0.8.6
 
   ## The world startup at system start.
-  world: "" 
+  world: ""
 
 ############################################
 # tls
@@ -214,8 +214,8 @@ tls: external
 
 ### ingress ###
 # Readme for details and instruction on adding tls secrets.
-ingress: 
-# options: nginx, contour
+ingress:
+  # options: nginx, contour
   class: nginx
   hostname: foundry.domain.com
   enabled: false
@@ -228,8 +228,8 @@ ingress:
   # configurationSnippet: |
   #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
   tls:
-     # {}, external, secret, or letsEncrypt
-     source: external
+    # {}, external, secret, or letsEncrypt
+    source: external
 ### LetsEncrypt config ###
 # ProTip: The production environment only allows you to register a name 5 times a week.
 #         Use staging until you have your config right.
@@ -243,15 +243,16 @@ selfsigned: {}
 # cert: certificate
 # key: certificate key
 # Certmanager version compatibility
-certmanager: 
+certmanager:
   version: "v1.0.3"
-
 
 ####################################################################
 #### Extra security and placement strategies that can be configured.
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
