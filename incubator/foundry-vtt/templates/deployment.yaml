@@ -35,9 +35,9 @@ spec:
             protocol: TCP
         livenessProbe:
           {{- if or (.Values.foundryvtt.username) (.Values.foundryvtt.release_url) }}
-          initialDelaySeconds: 300
-          failureThreshold: 30
-          periodSeconds: 20
+          initialDelaySeconds: 600
+          failureThreshold: 40
+          periodSeconds: 25
           {{- end }}
           httpGet:
             path: /
