@@ -27,8 +27,9 @@ jobs:
         id: list-changed
         env:
           FOLDERS: incubator
+          BRANCH: main
         run: |
-          changed=$(ct list-changed --chart-dirs $FOLDERS)
+          changed=$(ct list-changed --chart-dirs $FOLDERS --target-branch $BRANCH)
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
           fi
@@ -36,11 +37,10 @@ jobs:
       - name: Run chart-testing (lint)
         env:
           FOLDERS: incubator
-        run: ct lint --chart-dirs $FOLDER
-
-      - name: Create kind cluster
-        uses: helm/kind-action@v1.2.0
-        if: steps.list-changed.outputs.changed == 'true'
-
-      - name: Run chart-testing (install)
-        run: ct install
+          BRANCH: main
+        run: ls && ct version && ct lint --chart-dirs ${FOLDERS} --target-branch $BRANCH
+#      - name: Create kind cluster
+#        uses: helm/kind-action@v1.2.0
+#        if: steps.list-changed.outputs.changed == 'true'
+#      - name: Run chart-testing (install)
+#        run: ct install
