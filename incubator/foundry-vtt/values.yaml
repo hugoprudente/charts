@@ -8,7 +8,7 @@
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-0.8.6
+  tag: release-0.8.7
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -50,7 +50,7 @@ service:
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
   # externalTrafficPolicy: Local
   labels: {}
-  tls: true #Enable TLS for LoadBalancer
+  tls: true  # Enable TLS for LoadBalancer
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
@@ -164,13 +164,13 @@ foundryvtt:
   minifyStaticFiles: true
 
   ## Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port.
-  #proxyPort: "80"
+  # proxyPort: "80"
 
   ## Indicates whether the software is running behind a reverse proxy that uses SSL. This allows invitation links and A/V functionality to work as if the Foundry Server had SSL configured directly.
   proxySSL: true
 
-  # A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
-  #routePrefix: "/demo"
+  ## A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
+  # routePrefix: "/demo"
 
   ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
   s3:
@@ -181,8 +181,8 @@ foundryvtt:
     # aws_secret_access_key: *************
 
   ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
-  #sslCert: null
-  #sslKey: null
+  # sslCert: null
+  # sslKey: null
 
   ## An array of TURN configurations in JSON format. See: [Using a Custom Relay Server](https://foundryvtt.com/article/audio-video/custom). To disable the internal relay server comment the paramenter. It will be converted when stored in the secrets
   # turnConfigs:
@@ -200,7 +200,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 0.8.6
+  version: 0.8.7
 
   ## The world startup at system start.
   world: ""
