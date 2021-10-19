@@ -8,7 +8,7 @@
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-0.8.8
+  tag: release-0.8.9
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -201,7 +201,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 0.8.8
+  version: 0.8.9
 
   ## The world startup at system start.
   world: ""
