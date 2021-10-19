@@ -8,7 +8,7 @@
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-0.8.7
+  tag: release-0.8.8
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -50,7 +50,8 @@ service:
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
   # externalTrafficPolicy: Local
   labels: {}
-  tls: true  # Enable TLS for LoadBalancer
+  # Enable TLS for LoadBalancer
+  tls: true
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
@@ -200,7 +201,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 0.8.7
+  version: 0.8.8
 
   ## The world startup at system start.
   world: ""
