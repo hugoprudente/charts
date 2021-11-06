@@ -2,6 +2,25 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+cloudProviders:
+  aws:
+    accountId: ACCOUNTID
+    region: eu-west-1
+    loadBalancer:
+      enabled: true
+      backendProtocol: http
+      crossZoneLB: true
+      sslCertId: CERTID
+      sslPort: 443
+      type: nlb
+      # Values in this object will be postpended to `service.beta.kubernetes.io/aws-load-balancer-`
+      extraConfigs:
+        additional-resource-tags: auto-delete=never
+    serviceAccount:
+      enabled: false
+      roles: 
+      - ROLE
+        
 # IMAGE
 # Always use a private repo to host your image.
 # Please build your image using felddy/foundryvtt-docker.
@@ -21,7 +40,7 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: false
   # Annotations to add to the service account
-  annotations:
+  annotations: {}
     # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
     # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
@@ -46,23 +65,13 @@ service:
   port: 80
   protocol: TCP
   loadBalancerIP:
-  # loadBalancerSourceRanges: []
+  loadBalancerSourceRanges: []
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
-  # externalTrafficPolicy: Local
+  externalTrafficPolicy: Local
   labels: {}
   # Enable TLS for LoadBalancer
   tls: true
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: nlb
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
-    # Required if service.tls is true.
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:eu-west-1:ACCOUNTID:certificate/CERTID
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
-    # use external-dns to setup the domain
-    external-dns.alpha.kubernetes.io/hostname: foundry.domain.com
-    # Extra configs
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: auto-delete=never
+  annotations: {}
 
 persistence:
   ## Foundry VTT data Persistent Volume Storage Class
@@ -227,7 +236,7 @@ ingress:
 
   # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
   # configurationSnippet: |
-  #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
+  #   more_set_input_headers "X-Forwarded-Host: {{ .Values.foundryvtt.hostname }}";
   tls:
     # {}, external, secret, or letsEncrypt
     source: external

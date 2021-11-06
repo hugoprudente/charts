@@ -12,6 +12,8 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}    
   annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.foundryvtt.hostname }}
+    {{- include "foundry-vtt.cloudProvider.aws.loadBalacer.annotations" . | indent 4 }}
     {{- range $key, $value := .Values.service.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
