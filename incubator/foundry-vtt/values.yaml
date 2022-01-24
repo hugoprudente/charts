@@ -18,16 +18,16 @@ cloudProviders:
         additional-resource-tags: auto-delete=never
     serviceAccount:
       enabled: false
-      roles: 
-      - ROLE
-        
+      roles:
+        - ROLE
+
 # IMAGE
 # Always use a private repo to host your image.
 # Please build your image using felddy/foundryvtt-docker.
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-0.8.9
+  tag: release-9.242.0
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -210,7 +210,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 0.8.9
+  version: 9.242
 
   ## The world startup at system start.
   world: ""
