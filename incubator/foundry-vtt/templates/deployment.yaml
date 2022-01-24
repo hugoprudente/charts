@@ -50,6 +50,8 @@ spec:
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         env:
+          - name: UV_THREADPOOL_SIZE
+            value: "6"
           {{- if .Values.container.cache }}
           - name: CONTAINER_CACHE
             value: {{ .Values.container.cache }}
