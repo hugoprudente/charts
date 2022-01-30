@@ -27,7 +27,7 @@ cloudProviders:
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-9.242.0
+  tag: release-9.245
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -40,7 +40,8 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: false
   # Annotations to add to the service account
-  annotations: {}
+  annotations:
+    {}
     # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
     # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
@@ -210,7 +211,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 9.242
+  version: 9.245
 
   ## The world startup at system start.
   world: ""
