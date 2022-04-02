@@ -163,7 +163,7 @@ foundryvtt:
   # license_key:
 
   ## Admin password. Default: admin
-  adminKey: admin
+  adminPassword: admin
 
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"

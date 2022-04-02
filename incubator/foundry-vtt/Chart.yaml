@@ -2,8 +2,8 @@ apiVersion: v2
 name: foundry-vtt
 description: Foundry Virtual Tabletop
 type: application
-version: 0.2.14
-appVersion: "v9.266"
+version: 0.2.15
+appVersion: "v10.260"
 keywords:
   - game
   - server
