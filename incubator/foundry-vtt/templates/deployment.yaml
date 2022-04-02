@@ -7,7 +7,7 @@ metadata:
 spec:
   strategy:
     type: Recreate
-  replicas: {{ .Values.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       {{- include "foundry-vtt.selectorLabels" . | nindent 6 }}
@@ -23,10 +23,11 @@ spec:
       serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      dnsPolicy: "None"
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- if .Values.dnsConfig }}
       dnsConfig:
-        nameservers:
-          - 8.8.8.8
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
@@ -38,7 +39,7 @@ spec:
             containerPort: 30000
             protocol: TCP
         livenessProbe:
-          {{- if or (.Values.foundryvtt.username) (.Values.foundryvtt.release_url) }}
+          {{- if or (.Values.foundryvtt.username) (.Values.foundryvtt.releaseUrl) }}
           initialDelaySeconds: 600
           failureThreshold: 40
           periodSeconds: 25
@@ -55,7 +56,7 @@ spec:
           {{- toYaml .Values.resources | nindent 12 }}
         env:
           - name: UV_THREADPOOL_SIZE
-            value: "6"
+            value: {{ .Values.threadCount | quote }}
           {{- if .Values.container.cache }}
           - name: CONTAINER_CACHE
             value: {{ .Values.container.cache }}
@@ -107,16 +108,16 @@ spec:
                 name: {{ template "foundry-vtt.fullname" . }}
                 key: password
           {{- end }}
-          {{- if .Values.foundryvtt.release_url }}
+          {{- if .Values.foundryvtt.releaseUrl }}
           - name: FOUNDRY_RELEASE_URL
-            value: {{ .Values.foundryvtt.release_url }}
+            value: {{ .Values.foundryvtt.releaseUrl }}
           {{- end }}
           # foundry configuration files
           - name: FOUNDRY_ADMIN_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "foundry-vtt.fullname" . }}
-                key: adminKey
+                key: adminPassword
           {{- if .Values.foundryvtt.hostname }}
           - name: FOUNDRY_HOSTNAME
             value: {{ .Values.foundryvtt.hostname }}
@@ -125,12 +126,12 @@ spec:
           - name: FOUNDRY_LANGUAGE
             value: {{ .Values.foundryvtt.language }}
           {{- end }}
-          {{- if .Values.foundryvtt.license_key }}
+          {{- if .Values.foundryvtt.licenseKey }}
           - name: FOUNDRY_LICENSE_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ template "foundry-vtt.fullname" . }}
-                key: license_key
+                key: licenseKey
           {{- end }}
           {{- if .Values.foundryvtt.minifyStaticFiles }}
           - name: FOUNDRY_MINIFY_STATIC_FILES
@@ -148,10 +149,10 @@ spec:
           - name: FOUNDRY_ROUTE_PREFIX
             value: {{ .Values.foundryvtt.routePrefix }}
           {{- end }}
-          {{- if eq .Values.foundryvtt.s3.awsConfig "true" -}}
+          {{- if eq .Values.foundryvtt.s3.enabled "true" -}}
           - name: FOUNDRY_AWS_CONFIG
             value: "true"
-          {{- else if eq .Values.foundryvtt.s3.awsConfig "file" -}}
+          {{- else if eq .Values.foundryvtt.s3.enabled "file" -}}
           - name: FOUNDRY_AWS_CONFIG
             value: "/etc/secretaws/aws-credentials.json"
           {{- end }}
@@ -196,7 +197,7 @@ spec:
           readOnly: {{ $mount.readOnly }}
         {{- end }}
       {{- end }}
-      {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
+      {{- if eq .Values.foundryvtt.s3.enabled "file" }}
         - name: secret-aws
           mountPath: "/etc/secretaws/"
           readOnly: true
@@ -214,7 +215,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       volumes:
-    {{- if eq .Values.foundryvtt.s3.awsConfig "file" }}
+    {{- if eq .Values.foundryvtt.s3.enabled "file" }}
       - name: secret-aws
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}-aws

@@ -13,7 +13,7 @@ metadata:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       {{- template "configurationSnippet" . }}
 {{- end }}
-{{- if eq .Values.tls "external" }}
+{{- if not .Values.ingress.tls.enabled }}
     nginx.ingress.kubernetes.io/ssl-redirect: "false" # turn off ssl redirect for external.
 {{- else }}
   {{- if ne .Values.ingress.tls.source "secret" }}
@@ -26,8 +26,8 @@ metadata:
     {{- end }}
   {{- end }}
 {{- end }}
-{{- if .Values.ingress.extraAnnotations }}
-{{ toYaml .Values.ingress.extraAnnotations | indent 4 }}
+{{- if .Values.ingress.annotations }}
+{{ toYaml .Values.ingress.annotations | indent 4 }}
 {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.class}}
@@ -35,14 +35,14 @@ spec:
   - host: {{ .Values.ingress.hostname }}
     http:
       paths:
-      - pathType: Prefix
-        path: "/"
+      - pathType: {{ .Values.ingress.pathType }}
+        path: {{ .Values.ingress.path }}
         backend:
           service:
             name: {{ template "foundry-vtt.fullname" . }}
             port:
-              number: 80
-{{- if eq .Values.tls "ingress" }}
+              number: {{ .Values.service.port }}
+{{- if and (.Values.ingress.tls.enabled) (not (eq .Values.ingress.tls.source "external")) }}
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}

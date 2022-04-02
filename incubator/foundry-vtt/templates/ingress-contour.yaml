@@ -9,13 +9,13 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
   annotations:
-{{- if .Values.ingress.extraAnnotations }}
-{{ toYaml .Values.ingress.extraAnnotations | indent 4 }}
+{{- if .Values.ingress.annotations }}
+{{ toYaml .Values.ingress.annotations | indent 4 }}
 {{- end }}
 spec:
   virtualhost:
     fqdn: {{ .Values.ingress.hostname }}
-    {{- if eq .Values.tls "ingress" }}
+    {{- if and (.Values.ingress.tls.enabled) (not (eq .Values.ingress.tls.source "external")) }}
     tls:
       {{- if eq .Values.ingress.tls.source "secret" }}
       secretName: {{ template "foundry-vtt.fullname" . }}-signed
@@ -25,16 +25,16 @@ spec:
     {{- end }}
   routes:
     - conditions:
-      - prefix: /
+      - prefix: {{ .Values.ingress.path }}
       services:
         - name: {{ template "foundry-vtt.fullname" . }}
-          port: 80
+          port: {{ .Values.service.port }}
     - conditions:
       - prefix: /socket.io
       enableWebsockets: true  # Setting this to true enables websocket for all paths that match /websocket
       services:
         - name: {{ template "foundry-vtt.fullname" . }}
-          port: 80
+          port: {{ .Values.service.port }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -49,13 +49,13 @@ spec:
   - host: {{ .Values.ingress.hostname }}
     http:
       paths:
-       - pathType: Prefix
-         path: "/"
+       - pathType: {{ .Values.ingress.pathType }}
+         path: {{ .Values.ingress.path }}
          backend:
            service:
              name: {{ template "foundry-vtt.fullname" . }}
              port:
-               number: 80
+               number: {{ .Values.service.port }}
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}

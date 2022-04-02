@@ -1,4 +1,4 @@
-{{- if eq .Values.tls "ingress" -}}
+{{- if and (.Values.ingress.tls.enabled) (not (eq .Values.ingress.tls.source "external")) }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
