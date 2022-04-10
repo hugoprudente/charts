@@ -27,7 +27,7 @@ cloudProviders:
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-9.255
+  tag: release-9.266
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -115,8 +115,8 @@ persistence:
 
 # felddy/foundryvtt-docker container extra customizations.
 container:
-  ## Set a path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. The path should be in /data or another persistent mount point in the container. e.g.; /data/cache
-  # cache: /data/cache
+  ## Set a different path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. From v9.255.1 and v10.260.1 the /data/container_cache is created by default this is now enable by default to keep it consistent.
+  cache: /data/container_cache
 
   ## `gid` the deamon will be run under. Default is `foundry`
   # gid: 421
@@ -211,7 +211,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 9.255
+  version: 9.266
 
   ## The world startup at system start.
   world: ""
