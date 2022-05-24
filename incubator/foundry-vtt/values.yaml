@@ -29,7 +29,7 @@ cloudProviders:
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-9.266
+  tag: release-9.268
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -213,7 +213,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 9.266
+  version: 9.268
 
   ## The world startup at system start.
   world: ""
