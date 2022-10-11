@@ -27,7 +27,7 @@ cloudProviders:
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-9.266
+  tag: release-10.287
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
