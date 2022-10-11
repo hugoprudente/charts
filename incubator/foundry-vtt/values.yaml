@@ -91,10 +91,10 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "ebs-sc"
+  storageClass: ""
   dataDir:
     # Set this to false if you don't care to persist state between restarts.
-    enabled: false
+    enabled: true
     Size: 5Gi
 
   shared:
@@ -168,7 +168,7 @@ foundryvtt:
   adminPassword: admin
 
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
-  hostname: "foundry.domain.com"
+  hostname: "foundry.example.com"
 
   ## The default application language and module which provides the core translation files. Default is "en.core"
   language: en.core
@@ -213,7 +213,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "9.280"
+  version: "10.287"
 
   ## The world startup at system start.
   world: ""
@@ -230,7 +230,7 @@ tls: external
 ingress:
   # options: nginx, contour
   class: nginx
-  hostname: foundry.domain.com
+  hostname: foundry.example.com
   enabled: false
   extraAnnotations:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
