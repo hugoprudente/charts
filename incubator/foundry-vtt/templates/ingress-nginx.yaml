@@ -1,4 +1,4 @@
-{{- if and (eq .Values.ingress.enabled true) (eq .Values.ingress.class "nginx") }}
+{{- if and (eq .Values.ingress.enabled true) (ne .Values.ingress.class "contour") }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -30,6 +30,7 @@ metadata:
 {{ toYaml .Values.ingress.extraAnnotations | indent 4 }}
 {{- end }}
 spec:
+  ingressClassName: {{ .Values.ingress.class}}
   rules:
   - host: {{ .Values.ingress.hostname }}
     http:
