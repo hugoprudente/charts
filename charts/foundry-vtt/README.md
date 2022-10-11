@@ -31,7 +31,7 @@ minutes using this chart and Felddy [foundryvtt-docker](https://github.com/feldd
 To install the chart with the release name `my-release`, run:
 
 ```bash
-$ helm install my-release ./incubator/foundry-vtt
+$ helm install my-release ./charts/foundry-vtt
 ```
 
 or
@@ -41,7 +41,7 @@ $ helm install my-release \
     --set foundryvtt.adminPassword='MyPa$$word' \
     --set foundryvtt.username='my-foundry-website-user' \
     --set foundryvtt.password='my-foundry-website-user-pass' \
-    ./incubator/foundry-vtt
+    ./charts/foundry-vtt
 ```
 
 > **NOTE**: Check the [Values configurations](#required-combinations) for the combinations on how to fetch Foundry VTT application using Felddy's [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker) as an alternative to built your own container.
@@ -49,7 +49,7 @@ $ helm install my-release \
 or
 
 ```bash
-$ helm install my-release ./incubator/foundry-vtt -f incubator/foundry-vtt/values.yaml
+$ helm install my-release ./charts/foundry-vtt -f charts/foundry-vtt/values.yaml
 ```
 
 This command deploys a Foundry VTT dedicated server with sensible defaults.
@@ -75,13 +75,13 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```bash
 $ helm install my-release \
     --set foundryvtt.adminPassword='MyPa$$word' \
-    ./incubator/foundry-vtt
+    ./charts/foundry-vtt
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install my-release -f values.yaml ./incubator/foundry-vtt
+$ helm install my-release -f values.yaml ./charts/foundry-vtt
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
