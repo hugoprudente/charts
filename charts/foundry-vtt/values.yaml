@@ -189,9 +189,11 @@ foundryvtt:
   s3:
     awsConfig: "false"
     # To use the inline credentials and generate "awsConfig.json" use: awsConfig: file
-    # aws_access_key_id: *************
-    # aws_region: eu-west-1
-    # aws_secret_access_key: *************
+#    aws_access_key_id: *************
+    aws_region: eu-west-1
+#    aws_secret_access_key: *************
+#    aws_endpoint: https://{region}.amazonaws.com
+    aws_forcePathStyle: "false"
 
   ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
   # sslCert: null
