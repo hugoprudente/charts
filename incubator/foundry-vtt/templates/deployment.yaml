@@ -148,10 +148,10 @@ spec:
           - name: FOUNDRY_ROUTE_PREFIX
             value: {{ .Values.foundryvtt.routePrefix }}
           {{- end }}
-          {{- if eq .Values.foundryvtt.s3.awsConfig "true" -}}
+          {{- if eq .Values.foundryvtt.s3.awsConfig "true" }}
           - name: FOUNDRY_AWS_CONFIG
             value: "true"
-          {{- else if eq .Values.foundryvtt.s3.awsConfig "file" -}}
+          {{- else if eq .Values.foundryvtt.s3.awsConfig "file" }}
           - name: FOUNDRY_AWS_CONFIG
             value: "/etc/secretaws/aws-credentials.json"
           {{- end }}
