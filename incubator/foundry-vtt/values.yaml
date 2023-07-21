@@ -11,6 +11,39 @@
 ## @param serviceAccount.create Enable ServiceAccount Creation
 ## @param serviceAccount.annotations Extra annotations to add to the ServiceAccount
 ## @param serviceAccount.name Name of the Service Account
+replicas: 1
+
+cloudProviders:
+  aws:
+    accountId: ACCOUNTID
+    region: eu-west-1
+    loadBalancer:
+      enabled: true
+      backendProtocol: http
+      crossZoneLB: true
+      sslCertId: CERTID
+      sslPort: 443
+      type: nlb
+      # Values in this object will be postpended to `service.beta.kubernetes.io/aws-load-balancer-`
+      extraConfigs:
+        additional-resource-tags: auto-delete=never
+    serviceAccount:
+      enabled: false
+      roles:
+        - ROLE
+
+# IMAGE
+# Always use a private repo to host your image.
+# Please build your image using felddy/foundryvtt-docker.
+image:
+  pullPolicy: Always
+  repository: felddy/foundryvtt
+  tag: release-9.280.0
+
+# Credentials for Docker private repository.
+imagePullSecrets: []
+
+# Override the default chart name
 nameOverride: ""
 fullnameOverride: ""
 dnsPolicy: "ClusterFirst"
