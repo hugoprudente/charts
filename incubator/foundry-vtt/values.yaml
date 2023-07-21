@@ -2,80 +2,140 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicas: 1
-
-cloudProviders:
-  aws:
-    accountId: ACCOUNTID
-    region: eu-west-1
-    loadBalancer:
-      enabled: true
-      backendProtocol: http
-      crossZoneLB: true
-      sslCertId: CERTID
-      sslPort: 443
-      type: nlb
-      # Values in this object will be postpended to `service.beta.kubernetes.io/aws-load-balancer-`
-      extraConfigs:
-        additional-resource-tags: auto-delete=never
-    serviceAccount:
-      enabled: false
-      roles:
-        - ROLE
-
-# IMAGE
-# Always use a private repo to host your image.
-# Please build your image using felddy/foundryvtt-docker.
-image:
-  pullPolicy: Always
-  repository: felddy/foundryvtt
-  tag: release-9.280.0
-
-# Credentials for Docker private repository.
-imagePullSecrets: []
-
-# Override the default chart name
+## @section Common Parameters
+## @param nameOverride Name Override
+## @param fullnameOverride FullName Override
+## @param dnsPolicy Override DNS policies on a per-Pod basis. "ClusterFirst", "None", "ClusterFirstWithHostNet", "Default"
+## @param dnsConfig Override for FoundryVTT DNS Configuration
+## @param threadCount Override for default NodeJS Thread Count
+## @param serviceAccount.create Enable ServiceAccount Creation
+## @param serviceAccount.annotations Extra annotations to add to the ServiceAccount
+## @param serviceAccount.name Name of the Service Account
 nameOverride: ""
 fullnameOverride: ""
-
+dnsPolicy: "ClusterFirst"
+dnsConfig:
+  # nameservers:
+  #   - 8.8.8.8
+threadCount: "6"
 serviceAccount:
   # Specifies whether a service account should be created
   create: false
   # Annotations to add to the service account
-  annotations:
-    {}
-    # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
+  annotations: {}
+    # AWS EKS IAM Role for Service Account, for enabled: true S3 access.
     # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
 
+
+## @section Image Parameters
+## @param image.pullPolicy pullPolicy for the Image
+## @param image.repository Repository to take the Image from
+## @param image.tag Image Tag
+image:
+  pullPolicy: IfNotPresent
+  repository: felddy/foundryvtt
+  tag: "10.291"
+
+## @param imagePullSecrets Credentials for Docker private repository.
+imagePullSecrets: []
+
+
+## @section Pod Resources
+## @param resources.requests.cpu Percentile of CPU Requested to run
+## @param resources.requests.memory RAM Requested to run
+## @param resources.limits.cpu Maximum CPU allowed
+## @param resources.limits.memory Maximum RAM allowed
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  requests:
+    cpu: 500m
+    memory: 512Mi
   limits:
     cpu: 1024m
     memory: 1024Mi
-  requests:
-    cpu: 512m
-    memory: 512Mi
 
-service:
-  serviceType: LoadBalancer
-  port: 80
-  protocol: TCP
-  loadBalancerIP:
-  loadBalancerSourceRanges: []
-  ## Set the externalTrafficPolicy in the Service to either Cluster or Local
-  externalTrafficPolicy: Local
-  labels: {}
-  # Enable TLS for LoadBalancer
-  tls: true
-  annotations: {}
 
+## @section Pod Security and Scheduling
+## @param podSecurityContext Extra security context for Pods
+## @param securityContext Extra security context
+## @param nodeSelector Pod Node selector
+## @param tolerations Pod Tolerations
+## @param affinity Pod Affinity
+podSecurityContext: {}
+  # fsGroup: 2000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 421
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+
+## @section Container felddy/foundryvtt-docker customizations
+## @param container.cache Path to use when downloading or fetching already existing download
+## @param container.gid `GID` The daemon will be run under. Default is `foundry`
+## @param container.patches Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
+## @param container.patchUrls Set to a space-delimited list of URLs to be sourced after Foundry is installed but before it is started. Patch URLs are sourced in the order specified. CONTAINER_PATCH_URLS are processed before CONTAINER_PATCHES. ⚠️ Only use patch URLs from trusted sources!
+## @param container.preserveConfig Normally new `options.json` and `admin.txt` files are generated by the container at each startup.  Setting this to `true` prevents the container from modifying these files when they exist.  If they do not exist, they will be created as normal. Default is false.
+## @param container.preserveOwner Normally the ownership of the `/data` directory and its contents are changed to match that of the server at startup.  Setting this to a regular expression will exclude any matching paths and preserve their ownership.   _Note: This is a match on the whole path, not a search._  This is useful if you want mount a volume as read-only inside `/data`
+## @param container.timezone Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
+## @param container.uid `UID` the daemon will be run under. Default is `foundry`
+## @param container.verbose Set to `true` to enable verbose logging for the container utility scripts. Default is false
+container:
+  ## Set a different path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. From v9.255.1 and v10.260.1 the /data/container_cache is created by default this is now enable by default to keep it consistent.
+  cache: /data/container_cache
+
+  ## `gid` the deamon will be run under. Default is `foundry`
+  gid: 421
+
+  ## Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
+  patches: /data/patches
+
+  ## Set to a space-delimited list of URLs to be sourced after Foundry is installed but before it is started. Patch URLs are sourced in the order specified. CONTAINER_PATCH_URLS are processed before CONTAINER_PATCHES. ⚠️ Only use patch URLs from trusted sources!
+  patchUrls: []
+    # - https://www.path.example/z.sh
+    # - https://www.path.example/b.sh
+
+  ## Normally new `options.json` and `admin.txt` files are generated by the container at each startup.  Setting this to `true` prevents the container from modifying these files when they exist.  If they do not exist, they will be created as normal. Default is false.
+  preserveConfig: false
+
+  ## Normally the ownership of the `/data` directory and its contents are changed to match that of the server at startup.  Setting this to a regular expression will exclude any matching paths and preserve their ownership.   _Note: This is a match on the whole path, not a search._  This is useful if you want mount a volume as read-only inside `/data`
+  preserveOwner:
+
+  ## Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
+  timezone: UTC
+
+  ## `uid` the daemon will be run under. Default is `foundry`
+  uid: 421
+
+  ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
+  verbose: false
+
+
+## @section Persistence Storage Parameters
+## @param persistence.bind.enabled Enable bind mount for persistence storage
+## @param persistence.bind.hostpath Path in the host where to bind
+## @param persistence.storageClass: Storage Class to use when creating the Persistent Volume Claim
+## @param persistence.dataDir.enabled Enable the PVC
+## @param persistence.dataDir.size Size of the PVC
+## @param persistence.shared.enabled Enable tha shared mount for a NFS file system or a shared bind point with for sharing assets between multiple game instances when not using s3.
+## @param persistence.shared.mounts Shared mount points configurations for bind or pvc usage
+## - containerPath: is relative to the /data/Data
+##   type: bind or pvc
+##   hostpath: only used for bind mount
+##   readOnly: enable read only directories
+##   clainName: to be used mainly with NFS CSI PV/PVC
 persistence:
   ## Foundry VTT data Persistent Volume Storage Class
   ## Bind mount is mutually exclusive.
@@ -91,22 +151,17 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "ebs-sc"
+  storageClass: ""
   dataDir:
     # Set this to false if you don't care to persist state between restarts.
     enabled: false
-    Size: 5Gi
+    size: 5Gi
 
   shared:
     # Enable tha shared mount for a NFS file system or a shared bind point with for
     # sharing assets between multiple game instances when not using s3.
     enabled: false
-    mounts:
-    ## containerPath: is relative to the /data/Data
-    ## type: bind or pvc
-    ## hostpath: only used for bind mount
-    ## readOnly: enable read only directories
-    ## clainName: to be used mainly with NFS CSI PV/PVC
+    mounts: []
     # - containerPath: "/shared"
     #   type: bind
     #   hostPath: /files/assets
@@ -115,57 +170,69 @@ persistence:
     #   type: pvc
     #   claimName: "pvc-files"
 
-# felddy/foundryvtt-docker container extra customizations.
-container:
-  ## Set a different path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. From v9.255.1 and v10.260.1 the /data/container_cache is created by default this is now enable by default to keep it consistent.
-  cache: /data/container_cache
 
-  ## `gid` the deamon will be run under. Default is `foundry`
-  # gid: 421
+## @section Service Parameters
+## @param service.serviceType Type of Service to create, defaults to ClusterIP
+## @param service.port Port to expose
+## @param service.protocol Protocol to use
+## @param service.loadBalancerIP IP to assign to the Service if type LoadBalancer is selected, deprecated
+## @param service.loadBalancerSourceRanges Range from which to choose the IP to assign to the Service
+## @param service.externalTrafficPolicy External Traffic Policy
+## @param service.labels Extra labels to assign to the Service
+## @param service.tls Enable TLS for the Service
+## @param service.annotations Extra annotations to assign to the Service
+service:
+  serviceType: LoadBalancer
+  port: 80
+  protocol: TCP
+  loadBalancerIP:
+  loadBalancerSourceRanges: []
+  ## Set the externalTrafficPolicy in the Service to either Cluster or Local
+  externalTrafficPolicy: Local
+  labels: {}
+  # Enable TLS for LoadBalancer
+  tls: true
+  annotations: {}
 
-  ## Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
-  # patches: /data/patches
 
-  ## Set to a space-delimited list of URLs to be sourced after Foundry is installed but before it is started. Patch URLs are sourced in the order specified. CONTAINER_PATCH_URLS are processed before CONTAINER_PATCHES. ⚠️ Only use patch URLs from trusted sources!
-  # patchUrls:
-  #   - https://www.path.example/z.sh
-  #   - https://www.path.example/b.sh
+## @section FoundryVTT Configuration
+## @param foundryvtt.username Username of the Account who bought the FoundryVTT License
+## @param foundryvtt.password Password of the Account who bought the FoundryVTT License
+## @param foundryvtt.licenseKey License Key for FoundryVTT. If set the account infos are ignored.
+## @param foundryvtt.existingSecret Name of an existing Secret to fetch the account from. If set, account settings from values are ignored. Must be used in combination with `foundryvtt.existingLicenseType` to fetch the correct data
+## @param foundryvtt.existingLicenseType Type of License to be fetched from the existing secret. Must be either `account` or `licenseKey`. If set to `account`, the `existingSecret` must contain a `username`/`password` data pair. If set to `licenseKey`, the secret must contain a `licenseKey` data entry
+## @param foundryvtt.hostname Hostname of FoundryVTT
+## @param foundryvtt.language Language to use
+## @param foundryvtt.minifyStaticFiles Whether to minify static files or not
+## @param foundryvtt.proxySSL Indicates whether the software is running behind a reverse proxy that uses SSL. This allows invitation links and A/V functionality to work as if the Foundry Server had SSL configured directly.
+## @param foundryvtt.adminPassword Admin Password to Access Admin Page
+## @param foundryvtt.upnp Enable UPNP
+## @param foundryvtt.version FoundryVTT Version to use
+## @param foundryvtt.world World to load at startup
+## @param foundryvtt.s3.enabled Enable S3 Integration using ENV VAR of "file"
+## @param foundryvtt.s3.config.endpoint Custom S3 Endpoint, if different from AWS
+## @param foundryvtt.s3.config.accessKeyId Access Key ID
+## @param foundryvtt.s3.config.secretAccessKey Secret Access Key
+## @param foundryvtt.s3.config.region S3 Bucket Region
 
-  ## Normally new `options.json` and `admin.txt` files are generated by the container at each startup.  Setting this to `true` prevents the container from modifying these files when they exist.  If they do not exist, they will be created as normal. Default is false.
-  preserveConfig: false
-
-  ## Normally the ownership of the `/data` directory and its contents are changed to match that of the server at startup.  Setting this to a regular expression will exclude any matching paths and preserve their ownership.   _Note: This is a match on the whole path, not a search._  This is useful if you want mount a volume as read-only inside `/data`
-  # preserveOwner:
-
-  ## Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
-  timezone: UTC
-
-  ## `uid` the daemon will be run under. Default is `foundry`
-  # uid: 421
-
-  ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
-  verbose: false
-
-# Foundry VTT Custom configurations
 foundryvtt:
-  ###########################################
   ### All configurations details are provided here: https://foundryvtt.com/article/hosting/
   ### All supported environment variables can be found here: https://github.com/felddy/foundryvtt-docker/README.md
 
   ## Account username or email address for foundryvtt.com. Required for downloading an application distribution.
-  # username:
+  username: ""
 
   ## Account password for foundryvtt.com. Required for downloading an application distribution.
-  # password:
+  password: ""
 
   ##  S3 pre-signed URL generate from the user's profile.  Required for downloading an application distribution.
-  # release_url:
+  releaseUrl: ""
 
   ## The license key to install. e.g.; AAAA-BBBB-CCCC-DDDD-EEEE-FFFF If left unset, a license key will be fetched when using account authentication. If multiple license keys are associated with an account, one will be chosen at random. Specific licenses can be selected by passing in an integer index. The first license key being 1.
-  # license_key:
+  licenseKey: ""
 
   ## Admin password. Default: admin
-  adminKey: admin
+  adminPassword: admin
 
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"
@@ -185,13 +252,14 @@ foundryvtt:
   ## A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
   # routePrefix: "/demo"
 
-  ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
+  ## Credentials for generate the [enabled.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
   s3:
-    awsConfig: "false"
-    # To use the inline credentials and generate "awsConfig.json" use: awsConfig: file
-    # aws_access_key_id: *************
-    # aws_region: eu-west-1
-    # aws_secret_access_key: *************
+    enabled: "false"
+    # To use the inline credentials and generate "enabled.json" use: enabled: file
+    accessKeyId: ""
+    region: eu-west-1
+    secretAccessKey: ""
+    endpoint: ""
 
   ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
   # sslCert: null
@@ -213,65 +281,91 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "9.280"
+  version: "10.291"
 
   ## The world startup at system start.
   world: ""
 
-############################################
-# tls
-#   Where to offload the TLS/SSL encryption
-# - ingress (default)
-# - external
-tls: external
 
-### ingress ###
-# Readme for details and instruction on adding tls secrets.
+## @section Ingress Parameters
+## @param ingress.class Chosse the type of Ingress controller
+## @param ingress.enabled Enable Ingress creations
+## @param ingress.hostname Hostname for FoundryVTT
+## @param ingress.annotations Ingress Annotations, useful for TLS
+## @param ingress.path FoundryVTT Path
+## @param ingress.pathType Type of Path
+## @param ingress.tls.enabled Enable or Disable TLS
+## @param ingress.tls.source the source of your signed certification, allowed {}, external, secret, or letsEncrypt
+## @param ingress.configurationSnippet Extra NGINX Configuration to add as Annotation
 ingress:
   # options: nginx, contour
   class: nginx
   hostname: foundry.domain.com
   enabled: false
-  extraAnnotations:
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+  path: "/"
+  pathType: Prefix
+  annotations: {}
+    ## E.g.
+    # nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    # nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    # nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
 
   # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
+  configurationSnippet: ""
+  ## E.g.
   # configurationSnippet: |
   #   more_set_input_headers "X-Forwarded-Host: {{ .Values.foundryvtt.hostname }}";
   tls:
+    enabled: true
     # {}, external, secret, or letsEncrypt
     source: external
-### LetsEncrypt config ###
-# ProTip: The production environment only allows you to register a name 5 times a week.
-#         Use staging until you have your config right.
+
+
+## @section Let's Encrypt configuration
+## @param letsEncrypt.enabled Enable the Let's Encrypt for Cert Manager
+## @param letsEncrypt.email
+## @param letsEncrypt.environment environment for Let's Encrypt it can be 'staging' or 'production'
 letsEncrypt:
   enabled: false
   email: email@email.com
+  # ProTip: The production environment only allows you to register a name 5 times a week.
+  #         Use staging until you have your config right.
   environment: staging
 
-### secret config ###
-selfsigned: {}
-# cert: certificate
-# key: certificate key
-# Certmanager version compatibility
+
+## @section Self Signed cert configuration
+## @param selfsigned.enabled enable the usage of self-signed uploaded certification
+## @param selfsigned.cert the certificate
+## @param selfsigned.key the key for the certificate
+selfsigned:
+  enabled: false
+  cert: certificate
+  key: certificate key
+
+## @section Certmanager Configuration
+## @param certmanager.version Certmanager version compatibility
 certmanager:
   version: "v1.0.3"
 
-####################################################################
-#### Extra security and placement strategies that can be configured.
-podSecurityContext:
-  {}
-  # fsGroup: 2000
-securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-nodeSelector: {}
-tolerations: []
-affinity: {}
+
+## @section Cloud Providers Load Balancers service annotations
+## @param cloudProviders.aws AWS configuration for the service annotation.
+cloudProviders:
+  aws: {}
+    ## E.g
+    # accountId: ACCOUNTID
+    # region: eu-west-1
+    # loadBalancer:
+    #   enabled: true
+    #   backendProtocol: http
+    #   crossZoneLB: true
+    #   sslCertId: CERTID
+    #   sslPort: 443
+    #   type: nlb
+    #   # Values in this object will be postpended to `service.beta.kubernetes.io/aws-load-balancer-`
+    #   extraConfigs:
+    #     additional-resource-tags: auto-delete=never
+    # serviceAccount:
+    #   enabled: false
+    #   roles:
+    #     - ROLE
