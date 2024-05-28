@@ -61,6 +61,10 @@ spec:
           - name: CONTAINER_CACHE
             value: {{ .Values.container.cache }}
           {{- end }}
+          {{- if .Values.container.cacheSize }}
+          - name: CONTAINER_CACHE_SIZE
+            value: {{ .Values.container.cacheSize | quote }}
+          {{- end }}
           {{- if .Values.container.gid }}
           - name: FOUNDRY_GID
             value: {{ .Values.container.gid | quote }}

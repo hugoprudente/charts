@@ -37,7 +37,7 @@ serviceAccount:
 image:
   pullPolicy: IfNotPresent
   repository: felddy/foundryvtt
-  tag: "11.315"
+  tag: "12.324"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -80,6 +80,7 @@ affinity: {}
 
 ## @section Container felddy/foundryvtt-docker customizations
 ## @param container.cache Path to use when downloading or fetching already existing download
+## @param container.cacheSize Set the maximum number of distribution versions to keep in the cache. The minimum is 1. When the limit is exceeded, the oldest versions (lowest version numbers) are removed first. Unset to disable cache size management and keep all versions.
 ## @param container.gid `GID` The daemon will be run under. Default is `foundry`
 ## @param container.patches Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
 ## @param container.patchUrls Set to a space-delimited list of URLs to be sourced after Foundry is installed but before it is started. Patch URLs are sourced in the order specified. CONTAINER_PATCH_URLS are processed before CONTAINER_PATCHES. ⚠️ Only use patch URLs from trusted sources!
@@ -91,6 +92,9 @@ affinity: {}
 container:
   ## Set a different path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. From v9.255.1 and v10.260.1 the /data/container_cache is created by default this is now enable by default to keep it consistent.
   cache: /data/container_cache
+
+  ## Set the maximum number of distribution versions to keep in the cache. The minimum is 1. When the limit is exceeded, the oldest versions (lowest version numbers) are removed first. Unset to disable cache size management and keep all versions.
+  cacheSize: 1
 
   ## `gid` the deamon will be run under. Default is `foundry`
   gid: 421
@@ -278,7 +282,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "11.315"
+  version: "12.324"
 
   ## The world startup at system start.
   world: ""
