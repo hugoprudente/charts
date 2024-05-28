@@ -137,6 +137,10 @@ spec:
           - name: FOUNDRY_MINIFY_STATIC_FILES
             value: {{ .Values.foundryvtt.minifyStaticFiles | quote }}
           {{- end }}
+          {{- if .Values.foundryvtt.cssTheme }}
+          - name: FOUNDRY_CSS_THEME
+            value: {{ .Values.foundryvtt.cssTheme | quote }}
+          {{- end }}
           {{- if .Values.foundryvtt.proxyPort }}
           - name: FOUNDRY_PROXY_PORT
             value: {{ .Values.foundryvtt.proxyPort | quote }}
