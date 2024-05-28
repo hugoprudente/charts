@@ -66,7 +66,7 @@ Create the name of the service account to use
 Create annotations for AWS LoadBalancers
 */}}
 {{- define "foundry-vtt.cloudProvider.aws.loadBalacer.annotations" -}}
-{{- if and .Values.cloudProviders.aws.loadBalancer.enabled (eq .Values.service.serviceType "LoadBalancer") }}
+{{- if and .Values.cloudProviders.aws.loadBalancer (eq .Values.service.serviceType "LoadBalancer") }}
 service.beta.kubernetes.io/aws-load-balancer-type: {{ .Values.cloudProviders.aws.loadBalancer.type | quote }}
 service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.cloudProviders.aws.loadBalancer.backendProtocol | quote }}
 service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: {{ .Values.cloudProviders.aws.loadBalancer.crossZoneLB | quote }}

@@ -30,7 +30,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-
 ## @section Image Parameters
 ## @param image.pullPolicy pullPolicy for the Image
 ## @param image.repository Repository to take the Image from
@@ -38,11 +37,10 @@ serviceAccount:
 image:
   pullPolicy: IfNotPresent
   repository: felddy/foundryvtt
-  tag: "10.291"
+  tag: "11.306"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
-
 
 ## @section Pod Resources
 ## @param resources.requests.cpu Percentile of CPU Requested to run
@@ -60,7 +58,6 @@ resources:
   limits:
     cpu: 1024m
     memory: 1024Mi
-
 
 ## @section Pod Security and Scheduling
 ## @param podSecurityContext Extra security context for Pods
@@ -80,7 +77,6 @@ securityContext: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
-
 
 ## @section Container felddy/foundryvtt-docker customizations
 ## @param container.cache Path to use when downloading or fetching already existing download
@@ -121,7 +117,6 @@ container:
 
   ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
   verbose: false
-
 
 ## @section Persistence Storage Parameters
 ## @param persistence.bind.enabled Enable bind mount for persistence storage
@@ -170,7 +165,6 @@ persistence:
     #   type: pvc
     #   claimName: "pvc-files"
 
-
 ## @section Service Parameters
 ## @param service.serviceType Type of Service to create, defaults to ClusterIP
 ## @param service.port Port to expose
@@ -193,7 +187,6 @@ service:
   # Enable TLS for LoadBalancer
   tls: true
   annotations: {}
-
 
 ## @section FoundryVTT Configuration
 ## @param foundryvtt.username Username of the Account who bought the FoundryVTT License
@@ -281,11 +274,10 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "10.291"
+  version: "11.307"
 
   ## The world startup at system start.
   world: ""
-
 
 ## @section Ingress Parameters
 ## @param ingress.class Chosse the type of Ingress controller
@@ -304,7 +296,8 @@ ingress:
   enabled: false
   path: "/"
   pathType: Prefix
-  annotations: {}
+  annotations:
+    {}
     ## E.g.
     # nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     # nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
@@ -320,7 +313,6 @@ ingress:
     # {}, external, secret, or letsEncrypt
     source: external
 
-
 ## @section Let's Encrypt configuration
 ## @param letsEncrypt.enabled Enable the Let's Encrypt for Cert Manager
 ## @param letsEncrypt.email
@@ -331,7 +323,6 @@ letsEncrypt:
   # ProTip: The production environment only allows you to register a name 5 times a week.
   #         Use staging until you have your config right.
   environment: staging
-
 
 ## @section Self Signed cert configuration
 ## @param selfsigned.enabled enable the usage of self-signed uploaded certification
@@ -346,7 +337,6 @@ selfsigned:
 ## @param certmanager.version Certmanager version compatibility
 certmanager:
   version: "v1.0.3"
-
 
 ## @section Cloud Providers Load Balancers service annotations
 ## @param cloudProviders.aws AWS configuration for the service annotation.
