@@ -3,8 +3,8 @@ name: foundry-vtt
 description: Foundry Virtual Tabletop
 type: application
 icon: https://artifacthub.io/image/3e8ce5cf-7afe-4032-bae2-500b17e64b11@1x
-version: 11.308.0
-appVersion: "v11.308"
+version: 11.309.0
+appVersion: "v11.309"
 keywords:
   - game
   - server
