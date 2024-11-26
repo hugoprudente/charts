@@ -155,6 +155,8 @@ persistence:
     # Set this to false if you don't care to persist state between restarts.
     enabled: false
     size: 5Gi
+    ## Specify the name of an existing Persistent Volume Claim
+    claimName: ""
 
   shared:
     # Enable tha shared mount for a NFS file system or a shared bind point with for

@@ -233,6 +233,9 @@ spec:
         hostPath:
           path: {{ .Values.persistence.bind.hostpath }}
           type: Directory
+    {{- else if and (.Values.persistence.dataDir.enabled) (.Values.persistence.dataDir.claimName) }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.dataDir.claimName }}
     {{- else if .Values.persistence.dataDir.enabled }}
         persistentVolumeClaim:
           claimName: {{ template "foundry-vtt.fullname" . }}
