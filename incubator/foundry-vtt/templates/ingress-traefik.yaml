@@ -1,4 +1,20 @@
-{{- if and (eq .Values.ingress.enabled true) (eq .Values.ingress.class "nginx") }}
+{{- if and (eq .Values.ingress.enabled true) (eq .Values.ingress.class "traefik") }}
+{{- if .Values.ingress.tls.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ template "foundry-vtt.fullname" . }}
+  labels:
+    app: {{ template "foundry-vtt.fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+{{- end }}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -9,13 +25,10 @@ metadata:
     heritage: {{ .Release.Service }}
     release: {{ .Release.Name }}
   annotations:
-{{- if .Values.ingress.configurationSnippet }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      {{- template "configurationSnippet" . }}
-{{- end }}
 {{- if not .Values.ingress.tls.enabled }}
-    nginx.ingress.kubernetes.io/ssl-redirect: "false" # turn off ssl redirect for external.
+    traefik.ingress.kubernetes.io/router.tls: "false"
 {{- else }}
+    traefik.ingress.kubernetes.io/router.tls: "true"
   {{- if ne .Values.ingress.tls.source "secret" }}
     {{- $certmanagerVer :=  split "." .Values.certmanager.version -}}
     {{- if or (.Capabilities.APIVersions.Has "cert-manager.io/v1alpha2") (and (eq (int $certmanagerVer._0) 0) (ge (int $certmanagerVer._1) 11)) }}
@@ -44,12 +57,10 @@ spec:
               number: {{ .Values.service.port }}
 {{- if and (.Values.ingress.tls.enabled) (not (eq .Values.ingress.tls.source "external")) }}
   tls:
-  - hosts:
-    - {{ .Values.ingress.hostname }}
     {{- if eq .Values.ingress.tls.source "secret" }}
-    secretName: {{ template "foundry-vtt.fullname" . }}-signed
+    - secretName: {{ template "foundry-vtt.fullname" . }}-signed
     {{- else }}
-    secretName: {{ template "foundry-vtt.fullname" . }}-ingress
+    - secretName: {{ template "foundry-vtt.fullname" . }}-ingress
     {{- end}}
 {{- end }}
 {{- end }}

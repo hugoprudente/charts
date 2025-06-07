@@ -17,7 +17,7 @@ spec:
     {{- end }}
     email: {{ .Values.letsEncrypt.email }}
     privateKeySecretRef:
-      name: letsencrypt-{{ .Values.letsEncrypt.environment }}
+      name: letsencrypt-{{default "staging" ( .Values.letsEncrypt.environment ) }}
     solvers:
     - http01:
         ingress:
