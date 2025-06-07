@@ -8,10 +8,6 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-  annotations:
-  {{- if not (eq .Values.persistence.storageClass "-") }}
-    volume.beta.kubernetes.io/storage-class: {{ default "default" .Values.persistence.storageClass | quote }}
-  {{- end }}
 spec:
   accessModes:
     - ReadWriteOnce
