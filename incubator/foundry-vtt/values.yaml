@@ -37,7 +37,7 @@ serviceAccount:
 image:
   pullPolicy: IfNotPresent
   repository: felddy/foundryvtt
-  tag: "12.324"
+  tag: "12.343.0"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -111,7 +111,7 @@ container:
   preserveConfig: false
 
   ## Normally the ownership of the `/data` directory and its contents are changed to match that of the server at startup.  Setting this to a regular expression will exclude any matching paths and preserve their ownership.   _Note: This is a match on the whole path, not a search._  This is useful if you want mount a volume as read-only inside `/data`
-  preserveOwner:
+  preserveOwner: ""
 
   ## Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
   timezone: UTC
@@ -282,7 +282,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "12.324"
+  version: "12.343"
 
   ## The world startup at system start.
   world: ""
