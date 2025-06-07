@@ -14,7 +14,7 @@
 nameOverride: ""
 fullnameOverride: ""
 dnsPolicy: "ClusterFirst"
-dnsConfig:
+dnsConfig: {}
   # nameservers:
   #   - 8.8.8.8
 threadCount: "6"
