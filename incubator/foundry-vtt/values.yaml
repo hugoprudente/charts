@@ -101,7 +101,7 @@ container:
   ## Set the maximum number of distribution versions to keep in the cache. The minimum is 1. When the limit is exceeded, the oldest versions (lowest version numbers) are removed first. Unset to disable cache size management and keep all versions.
   cacheSize: 1
 
-  ## `gid` the deamon will be run under. Default is `foundry`
+  ## `gid` the deamon will be run under. Default since v13 is 1000
   gid: 1000
 
   ## Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
@@ -122,7 +122,7 @@ container:
   ## Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
   timezone: UTC
 
-  ## `uid` the daemon will be run under. Default is `foundry`
+  ## `uid` the daemon will be run under. Default since v13 is 1000
   uid: 1000
 
   ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
@@ -204,8 +204,7 @@ service:
 ## @param foundryvtt.username Username of the Account who bought the FoundryVTT License
 ## @param foundryvtt.password Password of the Account who bought the FoundryVTT License
 ## @param foundryvtt.licenseKey License Key for FoundryVTT. If set the account infos are ignored.
-## @param foundryvtt.existingSecret Name of an existing Secret to fetch the account from. If set, account settings from values are ignored. Must be used in combination with `foundryvtt.existingLicenseType` to fetch the correct data
-## @param foundryvtt.existingLicenseType Type of License to be fetched from the existing secret. Must be either `account` or `licenseKey`. If set to `account`, the `existingSecret` must contain a `username`/`password` data pair. If set to `licenseKey`, the secret must contain a `licenseKey` data entry
+## @param foundryvtt.configSecretName Name of an existing Secret to fetch the account from. If set, account settings from values are ignored. Make sure the keys are defined, even if empty.
 ## @param foundryvtt.hostname Hostname of FoundryVTT
 ## @param foundryvtt.language Language to use
 ## @param foundryvtt.minifyStaticFiles Whether to minify static files or not
@@ -307,6 +306,7 @@ foundryvtt:
 ## @param ingress.pathType Type of Path
 ## @param ingress.tls.enabled Enable or Disable TLS
 ## @param ingress.tls.source the source of your signed certification, allowed {}, external, secret, or letsEncrypt
+## @param ingress.tls.secretName the name of the secret if the source is secret.
 ## @param ingress.configurationSnippet Extra NGINX Configuration to add as Annotation
 ingress:
   # options: nginx, contour, traefik
@@ -331,6 +331,7 @@ ingress:
     enabled: true
     # {}, external, secret, or letsEncrypt
     source: external
+#    secretName: ''
 
 ## @section Let's Encrypt configuration
 ## @param letsEncrypt.enabled Enable the Let's Encrypt for Cert Manager

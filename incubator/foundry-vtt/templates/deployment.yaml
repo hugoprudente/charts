@@ -15,14 +15,16 @@ spec:
     metadata:
       labels:
         {{- include "foundry-vtt.selectorLabels" . | nindent 8 }}
-    spec:
+    spec:  
+      # Needed to keep license from being invalid every reboot!
+      hostname: {{ include "foundry-vtt.fullname" . }}    
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      securityContext: 
+        {{- toYaml (merge (dict  "fsGroup" (default 1000 .Values.container.gid)) .Values.podSecurityContext ) | nindent 8 }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       {{- if .Values.dnsConfig }}
       dnsConfig:
@@ -31,7 +33,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml (merge (dict  "runAsGroup" (default 1000 .Values.container.gid)  "runAsUser" (default 1000 .Values.container.uid)) .Values.securityContext) | nindent 12 }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
@@ -90,23 +92,26 @@ spec:
             value: {{ .Values.container.verbose | quote }}
           {{- end }}
           # Foundry fetch files only
-          {{- if or .Values.foundryvtt.username  (ne .Values.foundryvtt.configSecretName "")}}
+          {{- if or .Values.foundryvtt.username (not (empty .Values.foundryvtt.configSecretName))}}
           - name: FOUNDRY_USERNAME
             valueFrom:
               secretKeyRef:
                 name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
                 key: username
           {{- end }}
-          {{- if or .Values.foundryvtt.password  (ne .Values.foundryvtt.configSecretName "") }}
+          {{- if or .Values.foundryvtt.password (not (empty .Values.foundryvtt.configSecretName)) }}
           - name: FOUNDRY_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
                 key: password
           {{- end }}
-          {{- if .Values.foundryvtt.releaseUrl }}
+          {{- if or .Values.foundryvtt.releaseUrl (not (empty .Values.foundryvtt.configSecretName)) }}
           - name: FOUNDRY_RELEASE_URL
-            value: {{ .Values.foundryvtt.releaseUrl }}
+            valueFrom:  
+              secretKeyRef:
+                name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
+                key: releaseUrl
           {{- end }}
           # foundry configuration files
           - name: FOUNDRY_ADMIN_KEY
@@ -122,7 +127,7 @@ spec:
           - name: FOUNDRY_LANGUAGE
             value: {{ .Values.foundryvtt.language }}
           {{- end }}
-          {{- if or .Values.foundryvtt.licenseKey (ne .Values.foundryvtt.configSecretName "") }}
+          {{- if or .Values.foundryvtt.licenseKey  (not (empty .Values.foundryvtt.configSecretName)) }}
           - name: FOUNDRY_LICENSE_KEY
             valueFrom:
               secretKeyRef:
