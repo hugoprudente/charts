@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=./values.schema.json
 # Default values for foundry-vtt.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -15,6 +16,7 @@ nameOverride: ""
 fullnameOverride: ""
 dnsPolicy: "ClusterFirst"
 dnsConfig:
+  {}
   # nameservers:
   #   - 8.8.8.8
 threadCount: "6"
@@ -22,7 +24,8 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: false
   # Annotations to add to the service account
-  annotations: {}
+  annotations:
+    {}
     # AWS EKS IAM Role for Service Account, for enabled: true S3 access.
     # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
@@ -37,7 +40,7 @@ serviceAccount:
 image:
   pullPolicy: IfNotPresent
   repository: felddy/foundryvtt
-  tag: "12.343.0"
+  tag: "13.345"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -65,9 +68,11 @@ resources:
 ## @param nodeSelector Pod Node selector
 ## @param tolerations Pod Tolerations
 ## @param affinity Pod Affinity
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -97,13 +102,14 @@ container:
   cacheSize: 1
 
   ## `gid` the deamon will be run under. Default is `foundry`
-  gid: 421
+  gid: 1000
 
   ## Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
   patches: /data/patches
 
   ## Set to a space-delimited list of URLs to be sourced after Foundry is installed but before it is started. Patch URLs are sourced in the order specified. CONTAINER_PATCH_URLS are processed before CONTAINER_PATCHES. ⚠️ Only use patch URLs from trusted sources!
-  patchUrls: []
+  patchUrls:
+    []
     # - https://www.path.example/z.sh
     # - https://www.path.example/b.sh
 
@@ -117,7 +123,7 @@ container:
   timezone: UTC
 
   ## `uid` the daemon will be run under. Default is `foundry`
-  uid: 421
+  uid: 1000
 
   ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
   verbose: false
@@ -155,6 +161,8 @@ persistence:
     # Set this to false if you don't care to persist state between restarts.
     enabled: false
     size: 5Gi
+    ## Specify the name of an existing Persistent Volume Claim
+    claimName: ""
 
   shared:
     # Enable tha shared mount for a NFS file system or a shared bind point with for
@@ -217,6 +225,9 @@ foundryvtt:
   ### All configurations details are provided here: https://foundryvtt.com/article/hosting/
   ### All supported environment variables can be found here: https://github.com/felddy/foundryvtt-docker/README.md
 
+  ## This sets the config secret to use for the passwords/license key.  If it is set, do not create a new secret.
+  configSecretName: ""
+
   ## Account username or email address for foundryvtt.com. Required for downloading an application distribution.
   username: ""
 
@@ -230,10 +241,10 @@ foundryvtt:
   licenseKey: ""
 
   ## Admin password. Default: admin
-  adminPassword: admin
+  adminPassword: ""
 
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
-  hostname: "foundry.domain.com"
+  hostname: "foundry.example.com"
 
   ## The default application language and module which provides the core translation files. Default is "en.core"
   language: en.core
@@ -282,7 +293,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "12.343"
+  version: "13.345"
 
   ## The world startup at system start.
   world: ""
@@ -298,7 +309,7 @@ foundryvtt:
 ## @param ingress.tls.source the source of your signed certification, allowed {}, external, secret, or letsEncrypt
 ## @param ingress.configurationSnippet Extra NGINX Configuration to add as Annotation
 ingress:
-  # options: nginx, contour
+  # options: nginx, contour, traefik
   class: nginx
   hostname: foundry.domain.com
   enabled: false
@@ -349,7 +360,8 @@ certmanager:
 ## @section Cloud Providers Load Balancers service annotations
 ## @param cloudProviders.aws AWS configuration for the service annotation.
 cloudProviders:
-  aws: {}
+  aws:
+    {}
     ## E.g
     # accountId: ACCOUNTID
     # region: eu-west-1

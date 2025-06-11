@@ -65,10 +65,6 @@ spec:
           - name: CONTAINER_CACHE_SIZE
             value: {{ .Values.container.cacheSize | quote }}
           {{- end }}
-          {{- if .Values.container.gid }}
-          - name: FOUNDRY_GID
-            value: {{ .Values.container.gid | quote }}
-          {{- end }}
           {{- if .Values.container.patches }}
           - name: CONTAINER_PATCHES
             value: {{ .Values.container.patches }}
@@ -89,27 +85,23 @@ spec:
           - name: TIMEZONE
             value: {{ .Values.container.timezone }}
           {{- end }}
-          {{- if .Values.container.uid }}
-          - name: FOUNDRY_UID
-            value: {{ .Values.container.uid | quote }}
-          {{- end }}
           {{- if .Values.container.verbose }}
           - name: CONTAINER_VERBOSE
             value: {{ .Values.container.verbose | quote }}
           {{- end }}
           # Foundry fetch files only
-          {{- if .Values.foundryvtt.username }}
+          {{- if or .Values.foundryvtt.username  (ne .Values.foundryvtt.configSecretName "")}}
           - name: FOUNDRY_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ template "foundry-vtt.fullname" . }}
+                name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
                 key: username
           {{- end }}
-          {{- if .Values.foundryvtt.password }}
+          {{- if or .Values.foundryvtt.password  (ne .Values.foundryvtt.configSecretName "") }}
           - name: FOUNDRY_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ template "foundry-vtt.fullname" . }}
+                name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
                 key: password
           {{- end }}
           {{- if .Values.foundryvtt.releaseUrl }}
@@ -120,7 +112,7 @@ spec:
           - name: FOUNDRY_ADMIN_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ template "foundry-vtt.fullname" . }}
+                name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
                 key: adminPassword
           {{- if .Values.foundryvtt.hostname }}
           - name: FOUNDRY_HOSTNAME
@@ -130,11 +122,11 @@ spec:
           - name: FOUNDRY_LANGUAGE
             value: {{ .Values.foundryvtt.language }}
           {{- end }}
-          {{- if .Values.foundryvtt.licenseKey }}
+          {{- if or .Values.foundryvtt.licenseKey (ne .Values.foundryvtt.configSecretName "") }}
           - name: FOUNDRY_LICENSE_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ template "foundry-vtt.fullname" . }}
+                name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}
                 key: licenseKey
           {{- end }}
           {{- if .Values.foundryvtt.minifyStaticFiles }}
@@ -176,7 +168,7 @@ spec:
           - name: FOUNDRY_TURN_CONFIGS
             valueFrom:
               secretKeyRef:
-                name: {{ template "foundry-vtt.fullname" . }}-turn-configs
+                name: {{ default (include "foundry-vtt.fullname" . ) .Values.foundryvtt.configSecretName }}-turn-configs
                 key: turnConfigs.json
           {{- end }}
           {{- if .Values.foundryvtt.turnMaxPort }}
@@ -233,6 +225,9 @@ spec:
         hostPath:
           path: {{ .Values.persistence.bind.hostpath }}
           type: Directory
+    {{- else if and (.Values.persistence.dataDir.enabled) (.Values.persistence.dataDir.claimName) }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.dataDir.claimName }}
     {{- else if .Values.persistence.dataDir.enabled }}
         persistentVolumeClaim:
           claimName: {{ template "foundry-vtt.fullname" . }}
