@@ -1,4 +1,4 @@
-{{- if and (.Values.ingress.tls.enabled) (not (eq .Values.ingress.tls.source "external")) }}
+{{- if and (.Values.ingress.tls.enabled) (eq .Values.ingress.tls.source "letsEncrypt") }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -17,7 +17,7 @@ spec:
     {{- end }}
     email: {{ .Values.letsEncrypt.email }}
     privateKeySecretRef:
-      name: letsencrypt-{{ .Values.letsEncrypt.environment }}
+      name: letsencrypt-{{default "staging" ( .Values.letsEncrypt.environment ) }}
     solvers:
     - http01:
         ingress:
