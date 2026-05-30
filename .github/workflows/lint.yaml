@@ -4,14 +4,20 @@ on:
   pull_request:
     branches:
       - main
+      - 'foundryvtt/*.x'
   workflow_dispatch:
+
+env:
+  # Opt into Node.js 24 for any JS actions still defaulting to Node 20.
+  # See: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   lint-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -20,7 +26,7 @@ jobs:
         with:
           version: "3.16.2"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
@@ -31,7 +37,7 @@ jobs:
         id: list-changed
         env:
           FOLDERS: incubator
-          BRANCH: main
+          BRANCH: ${{ github.base_ref }}
         run: |
           changed=$(ct list-changed --chart-dirs $FOLDERS --target-branch $BRANCH)
           if [[ -n "$changed" ]]; then
@@ -42,7 +48,7 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         env:
           FOLDERS: incubator
-          BRANCH: main
+          BRANCH: ${{ github.base_ref }}
         run: ls && ct version && ct lint --chart-dirs ${FOLDERS} --target-branch $BRANCH
 #      - name: Create kind cluster
 #        uses: helm/kind-action@v1.2.0
