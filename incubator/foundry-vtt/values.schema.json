@@ -39,9 +39,6 @@
         "preserveConfig": {
           "type": "boolean"
         },
-        "preserveOwner": {
-          "type": "string"
-        },
         "timezone": {
           "type": "string"
         },
@@ -74,10 +71,19 @@
         "cssTheme": {
           "type": "string"
         },
+        "deleteNedb": {
+          "type": "string"
+        },
         "hostname": {
           "type": "string"
         },
         "language": {
+          "type": "string"
+        },
+        "logSize": {
+          "type": "string"
+        },
+        "maxLogs": {
           "type": "string"
         },
         "licenseKey": {
@@ -85,6 +91,9 @@
         },
         "minifyStaticFiles": {
           "type": "boolean"
+        },
+        "noBackups": {
+          "type": "string"
         },
         "password": {
           "type": "string"
@@ -95,7 +104,19 @@
         "telemetry": {
           "type": "string"
         },
+        "tempDir": {
+          "type": "string"
+        },
+        "unixSocket": {
+          "type": "string"
+        },
         "releaseUrl": {
+          "type": "string"
+        },
+        "serviceConfig": {
+          "type": "string"
+        },
+        "serviceKey": {
           "type": "string"
         },
         "s3": {
