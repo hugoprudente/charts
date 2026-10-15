@@ -162,7 +162,7 @@ distribution's name must be of the form: `foundryvtt-0.7.10.zip`
 | foundryvtt.sslCert           | An absolute or relative path that points towards a SSL certificate file which is used jointly with the sslKey option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.                                                                                                | null               |
 | foundryvtt.sslKey            | An absolute or relative path that points towards a SSL key file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.                                                                                                       | null               |
 | foundryvtt.upnp              | Allow Universal Plug and Play to automatically request port forwarding for the Foundry VTT port to your local network address.                                                                                                                                                                                                          | false              |
-| foundryvtt.version           | Version of Foundry Virtual Tabletop to install.                                                                                                                                                                                                                                                                                         | 14.368             |
+| foundryvtt.version           | Version of Foundry Virtual Tabletop to install.                                                                                                                                                                                                                                                                                         | 13.351             |
 | foundryvtt.world             | The world startup at system start.                                                                                                                                                                                                                                                                                                      | null               |
 
 ### Chart-only tuning
@@ -173,7 +173,7 @@ distribution's name must be of the form: `foundryvtt-0.7.10.zip`
 
 ## Upgrading
 
-### 14.368.1+
+### 13.351.1+
 
 - **Removed** `foundryvtt.turnConfigs` / `foundryvtt.turnMaxPort` and the TURN secret. Felddy images no longer expose `FOUNDRY_TURN_*` env vars; configure WebRTC relay servers in Foundry (Setup → Configuration or `options.json`). See [Using a Custom Relay Server](https://foundryvtt.com/article/audio-video/#custom).
 - **Removed** `container.preserveOwner`. Felddy ignores `CONTAINER_PRESERVE_OWNER`; use read-only volume mounts under `/data` instead.
