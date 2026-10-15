@@ -69,3 +69,5 @@ jobs:
           helm template smoke . --set ingress.enabled=true >/dev/null
           helm template smoke . --set ingress.enabled=true \
             --set 'ingress.configurationSnippet=more_set_headers test 1;' >/dev/null
+          helm template smoke . --set service.serviceType=NodePort \
+            --set service.nodePort=30080 >/dev/null

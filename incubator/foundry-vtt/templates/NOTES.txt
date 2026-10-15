@@ -2,7 +2,11 @@
 {{- if .Values.ingress.enabled }}
   http{{ if .Values.ingress.tls.enabled }}s{{ end }}://{{ .Values.ingress.hostname }}
 {{- else if contains "NodePort" .Values.service.serviceType }}
+  {{- if .Values.service.nodePort }}
+  export NODE_PORT={{ .Values.service.nodePort }}
+  {{- else }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "foundry-vtt.fullname" . }})
+  {{- end }}
   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
   echo http://$NODE_IP:$NODE_PORT
 {{- else if contains "LoadBalancer" .Values.service.serviceType }}

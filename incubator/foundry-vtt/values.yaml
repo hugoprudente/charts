@@ -204,6 +204,7 @@ persistence:
 ## @section Service Parameters
 ## @param service.serviceType Type of Service to create, defaults to ClusterIP
 ## @param service.port Port to expose
+## @param service.nodePort Fixed NodePort (30000-32767) when serviceType is NodePort; omit for automatic assignment
 ## @param service.protocol Protocol to use
 ## @param service.loadBalancerIP IP to assign to the Service if type LoadBalancer is selected, deprecated
 ## @param service.loadBalancerSourceRanges Range from which to choose the IP to assign to the Service
@@ -214,6 +215,7 @@ persistence:
 service:
   serviceType: LoadBalancer
   port: 80
+  nodePort:
   protocol: TCP
   loadBalancerIP:
   loadBalancerSourceRanges: []

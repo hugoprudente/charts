@@ -177,7 +177,23 @@ distribution's name must be of the form: `foundryvtt-0.7.10.zip`
 | ----------- | -------------------------------------------------------------------------------------- | ------- |
 | threadCount | Sets `UV_THREADPOOL_SIZE` for the Node.js process (not documented in Felddy README). | `6`     |
 
+### NodePort service
+
+Expose Foundry on every node’s IP at a stable port (for lab clusters or when you do not use a cloud load balancer). Set `service.serviceType` to `NodePort`. Optionally pin the host port with `service.nodePort` (30000–32767); if omitted, Kubernetes assigns one automatically.
+
+```bash
+helm upgrade --install my-release ./incubator/foundry-vtt \
+  --set service.serviceType=NodePort \
+  --set service.nodePort=30080
+```
+
+The Service maps `service.port` (default `80`) to the container’s HTTP port (`30000`). `service.tls` extra HTTPS port applies only when `serviceType` is `LoadBalancer`.
+
 ## Upgrading
+
+### 14.368.2+
+
+- **Added** `service.nodePort` when `service.serviceType` is `NodePort` (fixes [#39](https://github.com/hugoprudente/charts/issues/39)).
 
 ### 14.368.1+
 
