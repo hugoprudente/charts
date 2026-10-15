@@ -23,8 +23,16 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
-      securityContext: 
-        {{- toYaml (merge (dict  "fsGroup" (default 1000 .Values.container.gid)) .Values.podSecurityContext ) | nindent 8 }}
+      securityContext:
+        {{- $podCtx := dict "fsGroup" (default 1000 .Values.container.gid) -}}
+        {{- if .Values.security.hardened }}
+        {{- $_ := set $podCtx "runAsNonRoot" true -}}
+        {{- $_ := set $podCtx "runAsUser" (default 1000 .Values.container.uid) -}}
+        {{- $_ := set $podCtx "runAsGroup" (default 1000 .Values.container.gid) -}}
+        {{- $_ := set $podCtx "fsGroupChangePolicy" "OnRootMismatch" -}}
+        {{- $_ := set $podCtx "seccompProfile" (dict "type" "RuntimeDefault") -}}
+        {{- end }}
+        {{- toYaml (merge $podCtx .Values.podSecurityContext) | nindent 8 }}
       dnsPolicy: {{ .Values.dnsPolicy }}
       {{- if .Values.dnsConfig }}
       dnsConfig:
@@ -33,13 +41,37 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         securityContext:
-          {{- toYaml (merge (dict  "runAsGroup" (default 1000 .Values.container.gid)  "runAsUser" (default 1000 .Values.container.uid)) .Values.securityContext) | nindent 12 }}
+          {{- $ctrCtx := dict "runAsGroup" (default 1000 .Values.container.gid) "runAsUser" (default 1000 .Values.container.uid) -}}
+          {{- if .Values.security.hardened }}
+          {{- $_ := set $ctrCtx "allowPrivilegeEscalation" false -}}
+          {{- $_ := set $ctrCtx "readOnlyRootFilesystem" true -}}
+          {{- $_ := set $ctrCtx "capabilities" (dict "drop" (list "ALL")) -}}
+          {{- end }}
+          {{- toYaml (merge $ctrCtx .Values.securityContext) | nindent 12 }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
           - name: http
             containerPort: 30000
             protocol: TCP
+        {{- if .Values.probes.useStatusEndpoint }}
+        startupProbe:
+          httpGet:
+            path: {{ include "foundry-vtt.healthPath" . }}
+            port: http
+          periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+          failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+        readinessProbe:
+          httpGet:
+            path: {{ include "foundry-vtt.healthPath" . }}
+            port: http
+          periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+        livenessProbe:
+          httpGet:
+            path: {{ include "foundry-vtt.healthPath" . }}
+            port: http
+          periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+        {{- else }}
         livenessProbe:
           {{- if or (.Values.foundryvtt.username) (.Values.foundryvtt.releaseUrl) }}
           initialDelaySeconds: 600
@@ -54,6 +86,7 @@ spec:
           httpGet:
             path: /
             port: http
+        {{- end }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         env:
@@ -84,8 +117,12 @@ spec:
             value: {{ .Values.container.preserveOwner }}
           {{- end }}
           {{- if .Values.container.timezone }}
-          - name: TIMEZONE
+          - name: TZ
             value: {{ .Values.container.timezone }}
+          {{- end }}
+          {{- if .Values.container.umask }}
+          - name: CONTAINER_UMASK
+            value: {{ .Values.container.umask | quote }}
           {{- end }}
           {{- if .Values.container.verbose }}
           - name: CONTAINER_VERBOSE
@@ -150,6 +187,10 @@ spec:
           - name: FOUNDRY_PROXY_SSL
             value: {{ .Values.foundryvtt.proxySSL | quote }}
           {{- end }}
+          {{- if .Values.foundryvtt.telemetry }}
+          - name: FOUNDRY_TELEMETRY
+            value: {{ .Values.foundryvtt.telemetry | quote }}
+          {{- end }}
           {{- if .Values.foundryvtt.routePrefix }}
           - name: FOUNDRY_ROUTE_PREFIX
             value: {{ .Values.foundryvtt.routePrefix }}
@@ -195,6 +236,12 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data
+      {{- if .Values.security.hardened }}
+        - name: resources
+          mountPath: /home/node/resources
+        - name: tmp
+          mountPath: /tmp
+      {{- end }}
       {{- if eq .Values.persistence.shared.enabled true }}
         {{- range $i, $mount := .Values.persistence.shared.mounts }}
         - name: {{ printf "%s-%s" "shared" ($i|toString) }}
@@ -224,6 +271,12 @@ spec:
       - name: secret-aws
         secret:
           secretName: {{ include "foundry-vtt.fullname" . }}-aws
+    {{- end }}
+    {{- if .Values.security.hardened }}
+      - name: resources
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}
     {{- end }}
       - name: data
     {{- if and (eq .Values.persistence.bind.enabled true) (eq .Values.persistence.dataDir.enabled false) }}

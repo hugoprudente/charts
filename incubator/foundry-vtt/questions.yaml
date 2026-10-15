@@ -3,7 +3,7 @@ questions:
   - variable: foundryvtt.version
     label: Version
     description: Version of foundry to run
-    default: "13.345"
+    default: "14.368.0"
     type: string
     group: Foundry
 
@@ -223,7 +223,7 @@ questions:
 
   - variable: image.repository
     label: Image repository
-    default: felddy/foundryvtt
+    default: ghcr.io/felddy/foundryvtt
     group: Image
 
   - variable: image.tag
