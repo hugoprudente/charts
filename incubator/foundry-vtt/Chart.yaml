@@ -2,7 +2,7 @@ apiVersion: v2
 name: foundry-vtt
 description: Foundry Virtual Tabletop
 type: application
-version: "11.315.1"
+version: "11.315.2"
 appVersion: "11.315"
 home: https://foundryvtt.com
 icon: https://github.com/hugoprudente/charts/raw/foundryvtt/11.x/incubator/foundry-vtt/icon.png
