@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "foundry-vtt.fullname" . }}:{{ .Values.service.port }}']
+      args: ['http://{{ include "foundry-vtt.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
