@@ -21,6 +21,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "foundry-vtt.serviceAccountName" . }}
+      hostname: {{ include "foundry-vtt.fullname" . | quote }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
