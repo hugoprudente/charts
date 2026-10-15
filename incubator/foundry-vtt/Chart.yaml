@@ -3,9 +3,9 @@ name: foundry-vtt
 description: Foundry Virtual Tabletop
 type: application
 home: https://foundryvtt.com
-icon: https://github.com/hugoprudente/charts/raw/foundryvtt/14.x/incubator/foundry-vtt/icon.png
-version: 14.368.1
-appVersion: "v14.368"
+icon: https://github.com/hugoprudente/charts/raw/foundryvtt/12.x/incubator/foundry-vtt/icon.png
+version: 12.343.1
+appVersion: "v12.343"
 keywords:
   - game
   - server
@@ -14,7 +14,7 @@ keywords:
   - foundryvtt
   - foundry
 sources:
-  - https://github.com/hugoprudente/charts/tree/foundryvtt/14.x/incubator/foundry-vtt
+  - https://github.com/hugoprudente/charts/tree/foundryvtt/12.x/incubator/foundry-vtt
 maintainers:
   - name: hugoprudente
     email: hugo.kenshin@gmail.com
