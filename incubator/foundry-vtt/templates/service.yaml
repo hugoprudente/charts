@@ -21,7 +21,7 @@ spec:
 {{- if (or (eq .Values.service.serviceType "ClusterIP") (empty .Values.service.serviceType)) }}
   type: ClusterIP
 {{- else if eq .Values.service.serviceType "LoadBalancer" }}
-  type: {{ .Values.service.serviceType }}
+  type: LoadBalancer
   {{- if .Values.service.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
@@ -29,6 +29,8 @@ spec:
   loadBalancerSourceRanges:
 {{ toYaml .Values.service.loadBalancerSourceRanges | indent 4 }}
   {{- end -}}
+{{- else if eq .Values.service.serviceType "NodePort" }}
+  type: NodePort
 {{- else }}
   type: {{ .Values.service.serviceType }}
 {{- end }}
@@ -38,9 +40,12 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: http
-      protocol:  {{ .Values.service.protocol }}
+      protocol: {{ .Values.service.protocol }}
       name: http
-    {{- if .Values.service.tls }}
+      {{- if and (eq .Values.service.serviceType "NodePort") .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+    {{- if and .Values.service.tls (eq .Values.service.serviceType "LoadBalancer") }}
     - port: 443
       targetPort: http
       name: https

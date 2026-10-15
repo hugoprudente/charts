@@ -312,12 +312,20 @@ questions:
     options:
       - "ClusterIP"
       - "LoadBalancer"
+      - "NodePort"
 
   - variable: service.port
     label: Port
     group: Service
     type: int
     default: 80
+
+  - variable: service.nodePort
+    label: NodePort
+    group: Service
+    type: int
+    default:
+    show_if: "service.serviceType=NodePort"
 
   - variable: service.tls
     label: TLS

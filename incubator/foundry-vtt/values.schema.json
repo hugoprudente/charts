@@ -391,6 +391,9 @@
         "loadBalancerSourceRanges": {
           "type": "array"
         },
+        "nodePort": {
+          "type": ["integer", "null"]
+        },
         "port": {
           "type": "integer"
         },
@@ -398,6 +401,7 @@
           "type": "string"
         },
         "serviceType": {
+          "enum": ["ClusterIP", "LoadBalancer", "NodePort"],
           "type": "string"
         },
         "tls": {
