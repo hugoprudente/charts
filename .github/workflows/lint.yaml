@@ -26,7 +26,8 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          # ct/yamale (Chart.yaml schema) breaks on Python 3.14+ (ast.Num removed).
+          python-version: "3.12"
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.7.0
