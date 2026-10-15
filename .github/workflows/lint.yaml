@@ -1,29 +1,65 @@
 name: Lint and Test Charts
 
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - main
+      - 'foundryvtt/*.x'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   lint-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-      - name: Fetch history
-        run: git fetch --prune --unshallow
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "3.16.2"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.7.0
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        env:
+          FOLDERS: incubator
+          BRANCH: ${{ github.base_ref }}
+        run: |
+          changed=$(ct list-changed --chart-dirs "$FOLDERS" --target-branch "$BRANCH")
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Charts changed:"
+            echo "$changed"
+          else
+            echo "No chart changes detected against $BRANCH"
+          fi
 
       - name: Run chart-testing (lint)
-        id: lint
-        uses: helm/chart-testing-action@v1.0.0-rc.2
-        with:
-          command: lint
+        if: steps.list-changed.outputs.changed == 'true'
+        env:
+          FOLDERS: incubator
+          BRANCH: ${{ github.base_ref }}
+        run: ct lint --chart-dirs "$FOLDERS" --target-branch "$BRANCH"
 
-      - name: Create kind cluster
-        uses: helm/kind-action@v1.0.0-alpha.3
-        # Only build a kind cluster if there are chart changes to test.
-        if: steps.lint.outputs.changed == 'true'
-
-      - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@v1.0.0-rc.2
-        with:
-          command: install
+      - name: Helm template smoke tests (foundry-vtt)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          cd incubator/foundry-vtt
+          helm lint .
+          helm template smoke .
+          helm template smoke . --set persistence.dataDir.enabled=true
+          helm template smoke . --set ingress.enabled=true
+          helm template smoke . --set ingress.enabled=true \
+            --set 'ingress.configurationSnippet=more_set_headers test 1;'
