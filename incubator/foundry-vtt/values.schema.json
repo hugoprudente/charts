@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "nameOverride": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "dnsPolicy": { "type": "string" },
+    "dnsConfig": { "type": "object" },
+    "threadCount": { "type": "string" },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "annotations": { "type": "object" },
+        "name": { "type": "string" }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+      }
+    },
+    "imagePullSecrets": { "type": "array" },
+    "resources": { "type": "object" },
+    "podSecurityContext": { "type": "object" },
+    "securityContext": { "type": "object" },
+    "nodeSelector": { "type": "object" },
+    "tolerations": { "type": "array" },
+    "affinity": { "type": "object" },
+    "container": {
+      "type": "object",
+      "properties": {
+        "cache": { "type": "string" },
+        "gid": { "type": "integer" },
+        "uid": { "type": "integer" },
+        "patches": { "type": "string" },
+        "patchUrls": { "type": "array", "items": { "type": "string" } },
+        "preserveConfig": { "type": "boolean" },
+        "preserveOwner": { "type": ["string", "null"] },
+        "timezone": { "type": "string" },
+        "verbose": { "type": "boolean" }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "properties": {
+        "bind": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "hostpath": { "type": "string" }
+          }
+        },
+        "storageClass": { "type": "string" },
+        "dataDir": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "size": { "type": "string" }
+          }
+        },
+        "shared": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "mounts": { "type": "array" }
+          }
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "properties": {
+        "serviceType": { "type": "string" },
+        "port": { "type": "integer" },
+        "protocol": { "type": "string" },
+        "tls": { "type": "boolean" },
+        "annotations": { "type": "object" },
+        "labels": { "type": "object" }
+      }
+    },
+    "foundryvtt": {
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "releaseUrl": { "type": "string" },
+        "licenseKey": { "type": "string" },
+        "adminPassword": { "type": "string" },
+        "hostname": { "type": "string" },
+        "language": { "type": "string" },
+        "minifyStaticFiles": { "type": "boolean" },
+        "proxySSL": { "type": "boolean" },
+        "upnp": { "type": "boolean" },
+        "version": { "type": "string" },
+        "world": { "type": "string" },
+        "s3": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "string", "enum": ["false", "true", "file"] },
+            "accessKeyId": { "type": "string" },
+            "secretAccessKey": { "type": "string" },
+            "region": { "type": "string" },
+            "endpoint": { "type": "string" }
+          }
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "class": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "hostname": { "type": "string" },
+        "path": { "type": "string" },
+        "pathType": { "type": "string" },
+        "configurationSnippet": { "type": "string" },
+        "annotations": { "type": "object" },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "source": { "type": "string" }
+          }
+        }
+      }
+    },
+    "letsEncrypt": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "email": { "type": "string" },
+        "environment": { "type": "string" }
+      }
+    },
+    "selfsigned": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "cert": { "type": "string" },
+        "key": { "type": "string" }
+      }
+    },
+    "certmanager": { "type": "object" },
+    "cloudProviders": { "type": "object" }
+  }
+}
