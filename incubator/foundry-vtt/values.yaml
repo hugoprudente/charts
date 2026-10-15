@@ -1,6 +1,7 @@
 # Default values for foundry-vtt.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+# -- @schema values.schema.json
 
 ## @section Common Parameters
 ## @param nameOverride Name Override
@@ -14,9 +15,8 @@
 nameOverride: ""
 fullnameOverride: ""
 dnsPolicy: "ClusterFirst"
-dnsConfig:
-  # nameservers:
-  #   - 8.8.8.8
+# dnsConfig.nameservers e.g. [8.8.8.8]
+dnsConfig: {}
 threadCount: "6"
 serviceAccount:
   # Specifies whether a service account should be created
@@ -28,7 +28,7 @@ serviceAccount:
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name:
+  name: ""
 
 ## @section Image Parameters
 ## @param image.pullPolicy pullPolicy for the Image
@@ -37,7 +37,8 @@ serviceAccount:
 image:
   pullPolicy: IfNotPresent
   repository: felddy/foundryvtt
-  tag: "11.315"
+  # Felddy image tag; +letter suffix is a container rebuild on the same Foundry patch.
+  tag: "11.315.1"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -180,12 +181,11 @@ service:
   port: 80
   protocol: TCP
   loadBalancerIP:
-  loadBalancerSourceRanges: []
+  # loadBalancerSourceRanges: []
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
-  externalTrafficPolicy: Local
+  # externalTrafficPolicy: Local
   labels: {}
-  # Enable TLS for LoadBalancer
-  tls: true
+  tls: false
   annotations: {}
 
 ## @section FoundryVTT Configuration
@@ -334,8 +334,8 @@ letsEncrypt:
 ## @param selfsigned.key the key for the certificate
 selfsigned:
   enabled: false
-  cert: certificate
-  key: certificate key
+  cert: ""
+  key: ""
 
 ## @section Certmanager Configuration
 ## @param certmanager.version Certmanager version compatibility
@@ -345,7 +345,9 @@ certmanager:
 ## @section Cloud Providers Load Balancers service annotations
 ## @param cloudProviders.aws AWS configuration for the service annotation.
 cloudProviders:
-  aws: {}
+  aws:
+    loadBalancer:
+      enabled: false
     ## E.g
     # accountId: ACCOUNTID
     # region: eu-west-1
