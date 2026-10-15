@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 # -- @schema values.schema.json
 
-# IMAGE 
+# IMAGE
 # Always use a private repo to host your image.
 # Please build your image using felddy/foundryvtt-docker.
 image:
@@ -60,7 +60,7 @@ persistence:
   ## Bind mount is mutually exclusive.
   ## when storageClass for PV is enable this is automatically disabled
   ## To use bind.enabled == true and dataDir.enabled == false
-  bind:    
+  bind:
     enabled: false
     hostpath: /files
 
@@ -145,10 +145,10 @@ foundryvtt:
 
   ## Admin password. Default: admin
   adminKey: admin
-  
+
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"
-  
+
   ## The default application language and module which provides the core translation files. Default is "en.core"
   language: en.core
 
@@ -156,14 +156,14 @@ foundryvtt:
   minifyStaticFiles: true
 
   ## Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port.
-  #proxyPort: "80"
+  # proxyPort: "80"
 
   ## Indicates whether the software is running behind a reverse proxy that uses SSL. This allows invitation links and A/V functionality to work as if the Foundry Server had SSL configured directly.
   proxySSL: true
 
   # A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
-  #routePrefix: "/demo"
-  
+  # routePrefix: "/demo"
+
   ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
   s3:
     awsConfig: "false"
@@ -173,13 +173,13 @@ foundryvtt:
     # aws_secret_access_key: *************
 
   ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
-  #sslCert: null
-  #sslKey: null  
+  # sslCert: null
+  # sslKey: null
 
   ## An array of TURN configurations in JSON format. See: [Using a Custom Relay Server](https://foundryvtt.com/article/audio-video/custom). To disable the internal relay server comment the paramenter. It will be converted when stored in the secrets
   # turnConfigs:
   #   - url: "turn:example.com:3478"
-  #     urls: 
+  #     urls:
   #       - "turn:example.com:3478"
   #       - "turns:example.com:5349"
   #     username: "my username"
@@ -195,7 +195,7 @@ foundryvtt:
   version: "0.7.10"
 
   ## The world startup at system start.
-  world: "" 
+  world: ""
 
 ############################################
 # tls
@@ -206,8 +206,8 @@ tls: external
 
 ### ingress ###
 # Readme for details and instruction on adding tls secrets.
-ingress: 
-# options: nginx, contour
+ingress:
+  # options: nginx, contour
   class: nginx
   hostname: foundry.domain.com
   enabled: false
@@ -220,8 +220,8 @@ ingress:
   # configurationSnippet: |
   #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
   tls:
-     # {}, external, secret, or letsEncrypt
-     source: external
+    # {}, external, secret, or letsEncrypt
+    source: external
 ### LetsEncrypt config ###
 # ProTip: The production environment only allows you to register a name 5 times a week.
 #         Use staging until you have your config right.
@@ -237,7 +237,7 @@ selfsigned:
 # cert: certificate
 # key: certificate key
 # Certmanager version compatibility
-certmanager: 
+certmanager:
   version: "v1.0.3"
 
 
