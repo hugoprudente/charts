@@ -28,8 +28,14 @@ minutes using this chart and Felddy [foundryvtt-docker](https://github.com/feldd
 ## Prerequisites
 
 - 512 MB of RAM
-- Kubernetes 1.19+
+- Kubernetes 1.19+ (1.25+ recommended for Pod Security Admission—see [PSS.md](PSS.md))
 - PV provisioner support in the underlying infrastructure
+
+## Pod security (PSS / cluster admins)
+
+**Cluster administrators** enforce [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/) with [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) (namespace labels). Application teams can enable `security.hardened` and set `container.uid` / `container.gid` to align the pod spec with **baseline** or **restricted** policies.
+
+See **[PSS.md](PSS.md)** for copy-paste examples (namespace labels, GitOps manifests, Helm values, and troubleshooting).
 
 ## Installing the Chart
 
