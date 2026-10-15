@@ -45,6 +45,9 @@
         "timezone": {
           "type": "string"
         },
+        "umask": {
+          "type": "string"
+        },
         "uid": {
           "type": "integer"
         },
@@ -88,6 +91,9 @@
         },
         "proxySSL": {
           "type": "boolean"
+        },
+        "telemetry": {
+          "type": "string"
         },
         "releaseUrl": {
           "type": "string"
@@ -252,6 +258,52 @@
     },
     "podSecurityContext": {
       "properties": {},
+      "type": "object"
+    },
+    "probes": {
+      "properties": {
+        "liveness": {
+          "properties": {
+            "periodSeconds": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "path": {
+          "type": "string"
+        },
+        "readiness": {
+          "properties": {
+            "periodSeconds": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "startup": {
+          "properties": {
+            "failureThreshold": {
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "useStatusEndpoint": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "security": {
+      "properties": {
+        "hardened": {
+          "type": "boolean"
+        }
+      },
       "type": "object"
     },
     "resources": {

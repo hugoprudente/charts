@@ -38,9 +38,9 @@ serviceAccount:
 ## @param image.repository Repository to take the Image from
 ## @param image.tag Image Tag
 image:
-  pullPolicy: IfNotPresent
-  repository: felddy/foundryvtt
-  tag: "13.345"
+  pullPolicy: Always
+  repository: ghcr.io/felddy/foundryvtt
+  tag: "14.469.0"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -61,6 +61,29 @@ resources:
   limits:
     cpu: 1024m
     memory: 1024Mi
+
+## @section Health probes
+## @param probes.useStatusEndpoint Use Foundry /api/status probes with startupProbe (recommended for v13+)
+## @param probes.path HTTP path for probes when useStatusEndpoint is true
+## @param probes.startup.periodSeconds Startup probe interval
+## @param probes.startup.failureThreshold Startup probe failure budget (first install can take several minutes)
+## @param probes.readiness.periodSeconds Readiness probe interval
+## @param probes.liveness.periodSeconds Liveness probe interval
+probes:
+  useStatusEndpoint: true
+  path: /api/status
+  startup:
+    periodSeconds: 10
+    failureThreshold: 60
+  readiness:
+    periodSeconds: 10
+  liveness:
+    periodSeconds: 30
+
+## @section Kubernetes security (felddy foundryvtt-docker k8s guide)
+## @param security.hardened Apply read-only root, seccomp, and emptyDir for resources/tmp (matches upstream k8s manifests)
+security:
+  hardened: false
 
 ## @section Pod Security and Scheduling
 ## @param podSecurityContext Extra security context for Pods
@@ -94,6 +117,7 @@ affinity: {}
 ## @param container.timezone Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
 ## @param container.uid `UID` the daemon will be run under. Default is `foundry`
 ## @param container.verbose Set to `true` to enable verbose logging for the container utility scripts. Default is false
+## @param container.umask Optional umask for new files (e.g. "0002")
 container:
   ## Set a different path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. From v9.255.1 and v10.260.1 the /data/container_cache is created by default this is now enable by default to keep it consistent.
   cache: /data/container_cache
@@ -127,6 +151,9 @@ container:
 
   ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
   verbose: false
+
+  ## Control default permissions on new files (CONTAINER_UMASK). Leave empty to use image default.
+  umask: ""
 
 ## @section Persistence Storage Parameters
 ## @param persistence.bind.enabled Enable bind mount for persistence storage
@@ -213,6 +240,7 @@ service:
 ## @param foundryvtt.adminPassword Admin Password to Access Admin Page
 ## @param foundryvtt.upnp Enable UPNP
 ## @param foundryvtt.version FoundryVTT Version to use
+## @param foundryvtt.telemetry Set Foundry telemetry explicitly (true/false). Recommended to avoid launch prompts.
 ## @param foundryvtt.world World to load at startup
 ## @param foundryvtt.s3.enabled Enable S3 Integration using ENV VAR of "file"
 ## @param foundryvtt.s3.config.endpoint Custom S3 Endpoint, if different from AWS
@@ -292,7 +320,10 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "13.345"
+  version: "14.469"
+
+  ## Explicit telemetry choice (maps to FOUNDRY_TELEMETRY).
+  telemetry: "true"
 
   ## The world startup at system start.
   world: ""

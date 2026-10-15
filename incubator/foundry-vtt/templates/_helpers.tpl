@@ -63,6 +63,18 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
+HTTP path for liveness/readiness/startup probes (honors FOUNDRY_ROUTE_PREFIX).
+*/}}
+{{- define "foundry-vtt.healthPath" -}}
+{{- $path := .Values.probes.path | default "/api/status" -}}
+{{- if .Values.foundryvtt.routePrefix -}}
+{{- printf "%s%s" (.Values.foundryvtt.routePrefix | trimSuffix "/") $path -}}
+{{- else -}}
+{{- $path -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create annotations for AWS LoadBalancers
 */}}
 {{- define "foundry-vtt.cloudProvider.aws.loadBalacer.annotations" -}}
