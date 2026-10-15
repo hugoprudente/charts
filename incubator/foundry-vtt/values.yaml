@@ -1,14 +1,16 @@
 # Default values for foundry-vtt.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+# -- @schema values.schema.json
 
-# IMAGE 
+# IMAGE
 # Always use a private repo to host your image.
 # Please build your image using felddy/foundryvtt-docker.
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-0.7.9
+  # Felddy image tag; +letter suffix is a container rebuild on the same Foundry patch.
+  tag: "0.7.10+a"
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -21,13 +23,13 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: false
   # Annotations to add to the service account
-  annotations: 
+  annotations: {}
     # AWS EKS IAM Role for Service Account, for awsConfig: true S3 access.
     # https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name:
+  name: ""
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -50,25 +52,15 @@ service:
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
   # externalTrafficPolicy: Local
   labels: {}
-  tls: true #Enable TLS for LoadBalancer
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: nlb
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
-    # Required if service.tls is true.
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:eu-west-1:ACCOUNTID:certificate/CERTID
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
-    # use external-dns to setup the domain
-    external-dns.alpha.kubernetes.io/hostname: foundry.domain.com
-    # Extra configs
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: auto-delete=never
+  tls: false
+  annotations: {}
 
 persistence:
   ## Foundry VTT data Persistent Volume Storage Class
   ## Bind mount is mutually exclusive.
   ## when storageClass for PV is enable this is automatically disabled
   ## To use bind.enabled == true and dataDir.enabled == false
-  bind:    
+  bind:
     enabled: false
     hostpath: /files
 
@@ -78,7 +70,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "ebs-sc"
+  storageClass: ""
   dataDir:
     # Set this to false if you don't care to persist state between restarts.
     enabled: false
@@ -88,7 +80,7 @@ persistence:
     # Enable tha shared mount for a NFS file system or a shared bind point with for
     # sharing assets between multiple game instances when not using s3.
     enabled: false
-    mounts:
+    mounts: []
     ## containerPath: is relative to the /data/Data
     ## type: bind or pvc
     ## hostpath: only used for bind mount
@@ -107,8 +99,8 @@ container:
   ## Set a path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. The path should be in /data or another persistent mount point in the container. e.g.; /data/cache
   # cache: /data/cache
 
-  ## `gid` the deamon will be run under. Default is `foundry`
-  # gid: 421
+  ## `gid` the deamon will be run under. Default in felddy/foundryvtt image is 421.
+  gid: 421
 
   ## Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
   # patches: /data/patches
@@ -127,8 +119,8 @@ container:
   ## Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
   timezone: UTC
 
-  ## `uid` the daemon will be run under. Default is `foundry`
-  # uid: 421
+  ## `uid` the daemon will be run under. Default in felddy/foundryvtt image is 421.
+  uid: 421
 
   ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
   verbose: false
@@ -153,10 +145,10 @@ foundryvtt:
 
   ## Admin password. Default: admin
   adminKey: admin
-  
+
   ## A custom hostname to use in place of the host machine's public IP address when displaying the address of the game session. This allows for reverse proxies or DNS servers to modify the public address.
   hostname: "foundry.domain.com"
-  
+
   ## The default application language and module which provides the core translation files. Default is "en.core"
   language: en.core
 
@@ -164,14 +156,14 @@ foundryvtt:
   minifyStaticFiles: true
 
   ## Inform the Foundry Server that the software is running behind a reverse proxy on some other port. This allows the invitation links created to the game to include the correct external port.
-  #proxyPort: "80"
+  # proxyPort: "80"
 
   ## Indicates whether the software is running behind a reverse proxy that uses SSL. This allows invitation links and A/V functionality to work as if the Foundry Server had SSL configured directly.
   proxySSL: true
 
   # A string path which is appended to the base hostname to serve Foundry VTT content from a specific namespace. For example setting this to demo will result in data being served from http://x.x.x.x:30000/demo/.
-  #routePrefix: "/demo"
-  
+  # routePrefix: "/demo"
+
   ## Credentials for generate the [awsConfig.json](https://foundryvtt.com/article/aws-s3/) or `true` for AWS environment variable [credentials evaluation](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-credentials-node.html) usage.
   s3:
     awsConfig: "false"
@@ -181,13 +173,13 @@ foundryvtt:
     # aws_secret_access_key: *************
 
   ## An absolute or relative path that points towards a SSL key/cert file which is used jointly with the sslCert option to enable SSL and https connections. If both options are provided, the server will start using HTTPS automatically.
-  #sslCert: null
-  #sslKey: null  
+  # sslCert: null
+  # sslKey: null
 
   ## An array of TURN configurations in JSON format. See: [Using a Custom Relay Server](https://foundryvtt.com/article/audio-video/custom). To disable the internal relay server comment the paramenter. It will be converted when stored in the secrets
   # turnConfigs:
   #   - url: "turn:example.com:3478"
-  #     urls: 
+  #     urls:
   #       - "turn:example.com:3478"
   #       - "turns:example.com:5349"
   #     username: "my username"
@@ -200,10 +192,10 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: 0.7.9
+  version: "0.7.10"
 
   ## The world startup at system start.
-  world: "" 
+  world: ""
 
 ############################################
 # tls
@@ -214,8 +206,8 @@ tls: external
 
 ### ingress ###
 # Readme for details and instruction on adding tls secrets.
-ingress: 
-# options: nginx, contour
+ingress:
+  # options: nginx, contour
   class: nginx
   hostname: foundry.domain.com
   enabled: false
@@ -228,8 +220,8 @@ ingress:
   # configurationSnippet: |
   #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
   tls:
-     # {}, external, secret, or letsEncrypt
-     source: external
+    # {}, external, secret, or letsEncrypt
+    source: external
 ### LetsEncrypt config ###
 # ProTip: The production environment only allows you to register a name 5 times a week.
 #         Use staging until you have your config right.
@@ -239,11 +231,13 @@ letsEncrypt:
   environment: staging
 
 ### secret config ###
-selfsigned: {}
+selfsigned:
+  cert: ""
+  key: ""
 # cert: certificate
 # key: certificate key
 # Certmanager version compatibility
-certmanager: 
+certmanager:
   version: "v1.0.3"
 
 
