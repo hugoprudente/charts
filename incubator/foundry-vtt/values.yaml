@@ -1,6 +1,7 @@
 # Default values for foundry-vtt.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+# -- @schema values.schema.json
 
 replicas: 1
 
@@ -9,7 +10,7 @@ cloudProviders:
     accountId: ACCOUNTID
     region: eu-west-1
     loadBalancer:
-      enabled: true
+      enabled: false
       backendProtocol: http
       crossZoneLB: true
       sslCertId: CERTID
@@ -29,7 +30,8 @@ cloudProviders:
 image:
   pullPolicy: Always
   repository: felddy/foundryvtt
-  tag: release-9.280.0
+  # Felddy image tag; +letter suffix is a container rebuild on the same Foundry patch.
+  tag: "9.280.0"
 
 # Credentials for Docker private repository.
 imagePullSecrets: []
@@ -49,7 +51,7 @@ serviceAccount:
     # "eks.amazonaws.com/role-arn": "arn:aws:iam::ACCOUNTID:role/ROLE"
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name:
+  name: ""
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -68,12 +70,11 @@ service:
   port: 80
   protocol: TCP
   loadBalancerIP:
-  loadBalancerSourceRanges: []
+  # loadBalancerSourceRanges: []
   ## Set the externalTrafficPolicy in the Service to either Cluster or Local
-  externalTrafficPolicy: Local
+  # externalTrafficPolicy: Local
   labels: {}
-  # Enable TLS for LoadBalancer
-  tls: true
+  tls: false
   annotations: {}
 
 persistence:
@@ -91,7 +92,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass: "ebs-sc"
+  storageClass: ""
   dataDir:
     # Set this to false if you don't care to persist state between restarts.
     enabled: false
@@ -101,7 +102,7 @@ persistence:
     # Enable tha shared mount for a NFS file system or a shared bind point with for
     # sharing assets between multiple game instances when not using s3.
     enabled: false
-    mounts:
+    mounts: []
     ## containerPath: is relative to the /data/Data
     ## type: bind or pvc
     ## hostpath: only used for bind mount
@@ -120,8 +121,8 @@ container:
   ## Set a different path to cache downloads of the Foundry distribution archive and speed up subsequent container startups. From v9.255.1 and v10.260.1 the /data/container_cache is created by default this is now enable by default to keep it consistent.
   cache: /data/container_cache
 
-  ## `gid` the deamon will be run under. Default is `foundry`
-  # gid: 421
+  ## `gid` the deamon will be run under. Default in felddy/foundryvtt image is 421.
+  gid: 421
 
   ## Set a path to a directory of shell scripts to be sourced after Foundry is installed but before it is started. The path should be in /data or another persistent mount point in the container. e.g.; /data/container_patches Patch files are sourced in lexicographic order. CONTAINER_PATCHES are processed after CONTAINER_PATCH_URLS.
   # patches: /data/patches
@@ -140,8 +141,8 @@ container:
   ## Container [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). Default is UTC
   timezone: UTC
 
-  ## `uid` the daemon will be run under. Default is `foundry`
-  # uid: 421
+  ## `uid` the daemon will be run under. Default in felddy/foundryvtt image is 421.
+  uid: 421
 
   ## Set to `true` to enable verbose logging for the container utility scripts. Default is false
   verbose: false
@@ -252,7 +253,9 @@ letsEncrypt:
   environment: staging
 
 ### secret config ###
-selfsigned: {}
+selfsigned:
+  cert: ""
+  key: ""
 # cert: certificate
 # key: certificate key
 # Certmanager version compatibility

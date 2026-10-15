@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "replicas": { "type": "integer", "minimum": 1 },
+    "cloudProviders": {
+      "type": "object",
+      "properties": {
+        "aws": {
+          "type": "object",
+          "properties": {
+            "accountId": { "type": "string" },
+            "region": { "type": "string" },
+            "loadBalancer": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "backendProtocol": { "type": "string" },
+                "crossZoneLB": { "type": "boolean" },
+                "sslCertId": { "type": "string" },
+                "sslPort": { "type": "integer" },
+                "type": { "type": "string" },
+                "extraConfigs": { "type": "object" }
+              }
+            },
+            "serviceAccount": { "type": "object" }
+          }
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] }
+      }
+    },
+    "imagePullSecrets": { "type": "array" },
+    "nameOverride": { "type": "string" },
+    "fullnameOverride": { "type": "string" },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "annotations": { "type": ["object", "null"] },
+        "name": { "type": ["string", "null"] }
+      }
+    },
+    "resources": { "type": "object" },
+    "service": {
+      "type": "object",
+      "properties": {
+        "serviceType": { "type": "string" },
+        "port": { "type": "integer" },
+        "protocol": { "type": "string" },
+        "tls": { "type": "boolean" },
+        "annotations": { "type": "object" },
+        "labels": { "type": "object" }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "properties": {
+        "bind": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "hostpath": { "type": "string" }
+          }
+        },
+        "storageClass": { "type": "string" },
+        "dataDir": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "Size": { "type": "string" }
+          }
+        },
+        "shared": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "mounts": { "type": ["array", "null"] }
+          }
+        }
+      }
+    },
+    "container": {
+      "type": "object",
+      "properties": {
+        "cache": { "type": "string" },
+        "gid": { "type": "integer" },
+        "uid": { "type": "integer" },
+        "patches": { "type": "string" },
+        "patchUrls": { "type": "array", "items": { "type": "string" } },
+        "preserveConfig": { "type": "boolean" },
+        "preserveOwner": { "type": "string" },
+        "timezone": { "type": "string" },
+        "verbose": { "type": "boolean" }
+      }
+    },
+    "foundryvtt": {
+      "type": "object",
+      "properties": {
+        "adminKey": { "type": "string" },
+        "hostname": { "type": "string" },
+        "language": { "type": "string" },
+        "minifyStaticFiles": { "type": "boolean" },
+        "proxySSL": { "type": "boolean" },
+        "upnp": { "type": "boolean" },
+        "version": { "type": "string" },
+        "world": { "type": "string" },
+        "s3": {
+          "type": "object",
+          "properties": {
+            "awsConfig": { "type": "string", "enum": ["false", "true", "file"] }
+          }
+        }
+      }
+    },
+    "tls": { "type": "string", "enum": ["ingress", "external"] },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "class": { "type": "string", "enum": ["nginx", "contour"] },
+        "enabled": { "type": "boolean" },
+        "hostname": { "type": "string" },
+        "configurationSnippet": { "type": "string" },
+        "extraAnnotations": { "type": "object" },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "source": { "type": "string" }
+          }
+        }
+      }
+    },
+    "letsEncrypt": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "email": { "type": "string" },
+        "environment": { "type": "string" }
+      }
+    },
+    "selfsigned": {
+      "type": "object",
+      "properties": {
+        "cert": { "type": "string" },
+        "key": { "type": "string" }
+      }
+    },
+    "certmanager": { "type": "object" },
+    "podSecurityContext": { "type": "object" },
+    "securityContext": { "type": "object" },
+    "nodeSelector": { "type": "object" },
+    "tolerations": { "type": "array" },
+    "affinity": { "type": "object" }
+  }
+}
