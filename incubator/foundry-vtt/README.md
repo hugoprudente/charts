@@ -17,6 +17,16 @@
 You can get a [FoundryVTT](https://foundryvtt.com) instance up and running in
 minutes using this chart and Felddy [foundryvtt-docker](https://github.com/felddy/foundryvtt-docker) Docker container.
 
+### Version pins (0.8.x track)
+
+| Setting | Default | Meaning |
+|--------|---------|---------|
+| `foundryvtt.version` | `0.8.9` | `FOUNDRY_VERSION` installed inside the container |
+| `image.tag` | `0.8.9` | Felddy Docker image tag; `+letter` is a container rebuild on the same Foundry patch |
+| Chart `version` | `8.9.0` | Helm package version (independent of Foundry) |
+
+Use a newer Felddy rebuild by changing only `image.tag` (for example `0.8.9+a`) while keeping `foundryvtt.version` at `0.8.9`.
+
 ## Prerequisites
 
 - 512 MB of RAM
