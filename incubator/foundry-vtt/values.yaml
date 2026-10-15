@@ -40,7 +40,7 @@ serviceAccount:
 image:
   pullPolicy: Always
   repository: ghcr.io/felddy/foundryvtt
-  tag: "14.469.0"
+  tag: "14.368.0"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -320,7 +320,7 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "14.469"
+  version: "14.368"
 
   ## Explicit telemetry choice (maps to FOUNDRY_TELEMETRY).
   telemetry: "true"
