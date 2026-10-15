@@ -28,8 +28,14 @@ minutes using this chart and Felddy [foundryvtt-docker](https://github.com/feldd
 ## Prerequisites
 
 - 512 MB of RAM
-- Kubernetes 1.19+
+- Kubernetes 1.19+ (1.25+ recommended for Pod Security Admission—see [PSS.md](PSS.md))
 - PV provisioner support in the underlying infrastructure
+
+## Pod security (PSS / cluster admins)
+
+**Cluster administrators** enforce [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/) with [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) (namespace labels). Application teams can enable `security.hardened` and set `container.uid` / `container.gid` to align the pod spec with **baseline** or **restricted** policies.
+
+See **[PSS.md](PSS.md)** for copy-paste examples (namespace labels, GitOps manifests, Helm values, and troubleshooting).
 
 ## Installing the Chart
 
@@ -171,7 +177,23 @@ distribution's name must be of the form: `foundryvtt-0.7.10.zip`
 | ----------- | -------------------------------------------------------------------------------------- | ------- |
 | threadCount | Sets `UV_THREADPOOL_SIZE` for the Node.js process (not documented in Felddy README). | `6`     |
 
+### NodePort service
+
+Expose Foundry on every node’s IP at a stable port (for lab clusters or when you do not use a cloud load balancer). Set `service.serviceType` to `NodePort`. Optionally pin the host port with `service.nodePort` (30000–32767); if omitted, Kubernetes assigns one automatically.
+
+```bash
+helm upgrade --install my-release ./incubator/foundry-vtt \
+  --set service.serviceType=NodePort \
+  --set service.nodePort=30080
+```
+
+The Service maps `service.port` (default `80`) to the container’s HTTP port (`30000`). `service.tls` extra HTTPS port applies only when `serviceType` is `LoadBalancer`.
+
 ## Upgrading
+
+### 14.368.2+
+
+- **Added** `service.nodePort` when `service.serviceType` is `NodePort` (fixes [#39](https://github.com/hugoprudente/charts/issues/39)).
 
 ### 14.368.1+
 

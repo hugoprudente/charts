@@ -20,9 +20,9 @@ For more information on using Helm, refer to the [Helm documentation](https://gi
 
 ## Chart Format
 
-Take a look at the [alpine example chart](https://github.com/helm/helm/tree/master/cmd/helm/testdata/testcharts/alpine) for reference when you're writing your first few charts.
+When you're writing your first few charts, follow the official [Chart Guide](https://helm.sh/docs/topics/charts/) (chart layout, `Chart.yaml`, templates, values, and dependencies). The old alpine example that used to live in the Helm repository is no longer published there.
 
-Before contributing a Chart, become familiar with the format. Note that the project is still under active development and the format may still evolve a bit.
+Before contributing a Chart, become familiar with that format. Note that Helm is still under active development and the format may still evolve a bit.
 
 ## Repository Structure
 
