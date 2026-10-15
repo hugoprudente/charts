@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  # Opt into Node.js 24 for any JS actions still defaulting to Node 20.
+  # Opt into Node.js 24 for any JS actions still defaulting on Node 20.
   # See: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -28,7 +28,8 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          # ct/yamale (Chart.yaml schema) breaks on Python 3.14+ (ast.Num removed).
+          python-version: "3.12"
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.7.0
@@ -39,9 +40,13 @@ jobs:
           FOLDERS: incubator
           BRANCH: ${{ github.base_ref }}
         run: |
-          changed=$(ct list-changed --chart-dirs $FOLDERS --target-branch $BRANCH)
+          changed=$(ct list-changed --chart-dirs "$FOLDERS" --target-branch "$BRANCH")
           if [[ -n "$changed" ]]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Charts changed:"
+            echo "$changed"
+          else
+            echo "No chart changes detected against $BRANCH"
           fi
 
       - name: Run chart-testing (lint)
@@ -49,9 +54,18 @@ jobs:
         env:
           FOLDERS: incubator
           BRANCH: ${{ github.base_ref }}
-        run: ls && ct version && ct lint --chart-dirs ${FOLDERS} --target-branch $BRANCH
-#      - name: Create kind cluster
-#        uses: helm/kind-action@v1.2.0
-#        if: steps.list-changed.outputs.changed == 'true'
-#      - name: Run chart-testing (install)
-#        run: ct install
+        run: ct lint --chart-dirs "$FOLDERS" --target-branch "$BRANCH"
+
+      - name: Helm template smoke tests (foundry-vtt)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          cd incubator
+          helm lint foundry-vtt --strict
+          cd foundry-vtt
+          helm lint .
+          helm lint . --strict
+          helm template smoke . >/dev/null
+          helm template smoke . --set persistence.dataDir.enabled=true >/dev/null
+          helm template smoke . --set ingress.enabled=true >/dev/null
+          helm template smoke . --set ingress.enabled=true \
+            --set 'ingress.configurationSnippet=more_set_headers test 1;' >/dev/null
