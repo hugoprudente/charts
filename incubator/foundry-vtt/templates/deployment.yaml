@@ -182,45 +182,11 @@ spec:
           {{- if .Values.foundryvtt.proxySSL }}
           - name: FOUNDRY_PROXY_SSL
             value: {{ .Values.foundryvtt.proxySSL | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.telemetry }}
+          {{- end }}          {{- if .Values.foundryvtt.telemetry }}
           - name: FOUNDRY_TELEMETRY
             value: {{ .Values.foundryvtt.telemetry | quote }}
           {{- end }}
-          {{- if .Values.foundryvtt.deleteNedb }}
-          - name: FOUNDRY_DELETE_NEDB
-            value: {{ .Values.foundryvtt.deleteNedb | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.logSize }}
-          - name: FOUNDRY_LOG_SIZE
-            value: {{ .Values.foundryvtt.logSize | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.maxLogs }}
-          - name: FOUNDRY_MAX_LOGS
-            value: {{ .Values.foundryvtt.maxLogs | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.noBackups }}
-          - name: FOUNDRY_NO_BACKUPS
-            value: {{ .Values.foundryvtt.noBackups | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.serviceConfig }}
-          - name: FOUNDRY_SERVICE_CONFIG
-            value: {{ .Values.foundryvtt.serviceConfig | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.serviceKey }}
-          - name: FOUNDRY_SERVICE_KEY
-            value: {{ .Values.foundryvtt.serviceKey | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.tempDir }}
-          - name: FOUNDRY_TEMP_DIR
-            value: {{ .Values.foundryvtt.tempDir | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.unixSocket }}
-          - name: FOUNDRY_UNIX_SOCKET
-            value: {{ .Values.foundryvtt.unixSocket | quote }}
-          {{- end }}
-          {{- if .Values.foundryvtt.routePrefix }}
-          - name: FOUNDRY_ROUTE_PREFIX
+          {{- if .Values.foundryvtt.routePrefix }}          - name: FOUNDRY_ROUTE_PREFIX
             value: {{ .Values.foundryvtt.routePrefix }}
           {{- end }}
           {{- if eq .Values.foundryvtt.s3.enabled "true" -}}

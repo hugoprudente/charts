@@ -41,7 +41,7 @@ serviceAccount:
 image:
   pullPolicy: Always
   repository: ghcr.io/felddy/foundryvtt
-  tag: "14.368.0"
+  tag: "13.351.0"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
@@ -238,14 +238,6 @@ service:
 ## @param foundryvtt.upnp Enable UPNP
 ## @param foundryvtt.version FoundryVTT Version to use
 ## @param foundryvtt.telemetry Set Foundry telemetry explicitly (true/false). Recommended to avoid launch prompts.
-## @param foundryvtt.deleteNedb Delete legacy NeDB files after LevelDB migration (Felddy 14+).
-## @param foundryvtt.logSize Max log file size before rotation (e.g. 1024k, 64m).
-## @param foundryvtt.maxLogs Max rotated log files to retain.
-## @param foundryvtt.noBackups Disable automatic world backups before major migrations.
-## @param foundryvtt.serviceConfig Path to service configuration file (requires serviceKey).
-## @param foundryvtt.serviceKey Service key paired with serviceConfig.
-## @param foundryvtt.tempDir Temp directory for package zip downloads during install.
-## @param foundryvtt.unixSocket Unix domain socket path for the server listener.
 ## @param foundryvtt.world World to load at startup
 ## @param foundryvtt.s3.enabled Enable S3 Integration using ENV VAR of "file"
 ## @param foundryvtt.s3.config.endpoint Custom S3 Endpoint, if different from AWS
@@ -313,19 +305,11 @@ foundryvtt:
   upnp: false
 
   ## Version of Foundry VTT to install.
-  version: "14.368"
+  version: "13.351"
 
   ## Explicit telemetry choice (maps to FOUNDRY_TELEMETRY).
   telemetry: "true"
 
-  # deleteNedb: "false"
-  # logSize: ""
-  # maxLogs: ""
-  # noBackups: "false"
-  # serviceConfig: ""
-  # serviceKey: ""
-  # tempDir: ""
-  # unixSocket: ""
 
   ## The world startup at system start.
   world: ""
