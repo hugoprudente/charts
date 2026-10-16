@@ -4,8 +4,8 @@ description: Foundry Virtual Tabletop
 type: application
 home: https://foundryvtt.com
 icon: https://github.com/hugoprudente/charts/raw/foundryvtt/14.x/incubator/foundry-vtt/icon.png
-version: 14.368.2
-appVersion: "v14.368"
+version: 14.369.0
+appVersion: "v14.369"
 keywords:
   - game
   - server
