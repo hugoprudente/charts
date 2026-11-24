@@ -41,7 +41,7 @@ serviceAccount:
 image:
   pullPolicy: Always
   repository: ghcr.io/felddy/foundryvtt
-  tag: "14.369.0"
+  tag: "14.370.1"
 
 ## @param imagePullSecrets Credentials for Docker private repository.
 imagePullSecrets: []
